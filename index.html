@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>COM Diagnosis &amp; Management · Pattern Study Temple</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500; 600; 700&family=Cormorant+Garamond:ital,wght@0,400; 0,500; 0,600; 1,400; 1,500&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#120f14;
+      --ink-2:#1a1520;
+      --parchment:#efe0c3;
+      --gold:#b8975a;
+      --rose:#9d6c7f;
+      --plum:#5b435f;
+      --text:#f5eee5;
+      --muted:#c8b5bc;
+      --good:#8ea892;
+      --bad:#bc8a91;
+      --border:rgba(184,151,90,.22);
+      --glass:rgba(22,17,28,.62);
+      --glass-2:rgba(30,22,38,.72);
+      --shadow:0 22px 48px rgba(0,0,0,.34);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family:"Cormorant Garamond", Georgia, serif;
+      background:
+        radial-gradient(circle at 15% 14%, rgba(157,108,127,.12), transparent 20%),
+        radial-gradient(circle at 85% 12%, rgba(91,67,95,.18), transparent 22%),
+        radial-gradient(circle at 55% 82%, rgba(184,151,90,.06), transparent 18%),
+        linear-gradient(180deg, #07060a 0%, #0b0810 34%, #120d17 100%);
+      letter-spacing:.01em;
+    }
+    body:before{
+      content:"";
+      position:fixed; inset:0; pointer-events:none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.016) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.012) 1px, transparent 1px);
+      background-size:46px 46px;
+      opacity:.18;
+      mask-image: radial-gradient(circle at center, black 30%, transparent 88%);
+    }
+    .wrap{max-width:1240px; margin:0 auto; padding:28px 22px 52px}
+    .hero,.card{
+      position:relative;
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .hero{
+      background:
+        radial-gradient(circle at top left, rgba(184,151,90,.12), transparent 24%),
+        radial-gradient(circle at right center, rgba(157,108,127,.16), transparent 24%),
+        linear-gradient(135deg, rgba(19,15,24,.92), rgba(12,9,17,.9));
+      padding:34px;
+      margin-bottom:20px;
+    }
+    .hero:before,.card:before{
+      content:"";
+      position:absolute; inset:7px;
+      border:1px solid rgba(184,151,90,.12);
+      pointer-events:none;
+    }
+    .hero:after{
+      content:"✦";
+      position:absolute; top:16px; right:20px;
+      color:rgba(184,151,90,.62);
+      font-size:1rem;
+    }
+    .hero-divider{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:18px;
+      margin-top:22px;
+      color:rgba(184,151,90,.78);
+      font-family:"Cinzel", serif;
+      letter-spacing:.3em;
+    }
+    .hero-divider:before,.hero-divider:after{
+      content:"";
+      display:block;
+      width:120px;
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(184,151,90,.45), transparent);
+    }
+    h1,h2,h3,.tag,.big,.table th{
+      font-family:"Cinzel", serif;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:var(--parchment);
+    }
+    h1,h2,h3{margin:0 0 10px}
+    h1{font-size:clamp(1.9rem,4vw,3rem); line-height:1.08}
+    h2{font-size:1rem}
+    h3{font-size:.9rem; color:#ead3ae}
+    p{margin:0 0 12px; color:var(--muted); font-size:1.1rem}
+    em{font-style:italic; color:#f0dfcf}
+    .subtle{color:#d6c0c6}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:18px;
+    }
+    .card{background:var(--glass); padding:18px}
+    .card.strong{background:var(--glass-2)}
+    .card.soft{background:rgba(25,19,32,.58)}
+    .study-modes-panel{
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      min-height:250px;
+    }
+    .study-modes-panel .memory-box{margin-top:auto}
+    .col-3{grid-column:span 3}
+    .col-6{grid-column:span 6}
+    .col-9{grid-column:span 9}
+    .col-12{grid-column:span 12}
+    @media (max-width: 920px){
+      .col-3,.col-6,.col-9,.col-12{grid-column:span 12}
+      .hero{padding:26px}
+    }
+    .toolbar,.row{
+      display:flex;
+      gap:16px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+      margin:12px 0 4px;
+    }
+    button,select,input{
+      font:inherit;
+      border-radius:0;
+      border:1px solid rgba(184,151,90,.22);
+      font-family:"Cormorant Garamond", serif;
+    }
+    button{
+      position:relative;
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      overflow:hidden;
+      isolation:isolate;
+      padding:13px 18px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:1.06rem;
+      box-shadow:0 10px 18px rgba(0,0,0,.16);
+      transition:color .22s ease, border-color .22s ease, transform .18s ease;
+    }
+    button:before{
+      content:"";
+      position:absolute;
+      left:0; right:0; bottom:0;
+      height:0%;
+      background:#b8975a;
+      z-index:-1;
+      transition:height .22s ease;
+    }
+    button:hover:before{height:100%}
+    button:hover{
+      color:#1b140b;
+      border-color:#b8975a;
+      transform:translateY(-1px);
+    }
+
+    select,input{
+      background:rgba(255,255,255,.035);
+      color:var(--text);
+      padding:12px 14px;
+      font-size:1.04rem;
+      min-height:48px;
+    }
+    select{
+      appearance:none;
+      -webkit-appearance:none;
+      -moz-appearance:none;
+      background:
+        linear-gradient(135deg, rgba(25,18,31,.92), rgba(17,12,22,.96));
+      border:1px solid rgba(184,151,90,.45);
+      color:#f0dfcf;
+      box-shadow:
+        inset 0 0 0 1px rgba(184,151,90,.12),
+        0 10px 22px rgba(0,0,0,.22);
+      padding:12px 48px;
+      min-width:240px;
+      letter-spacing:.04em;
+      text-align:center;
+      text-align-last:center;
+      text-transform:capitalize;
+      background-image:
+        linear-gradient(135deg, rgba(25,18,31,.92), rgba(17,12,22,.96)),
+        url("data:image/svg+xml; utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path fill='%23b8975a' d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat:no-repeat,no-repeat;
+      background-position:center center, right 14px center;
+      background-size:auto, 18px;
+      transition:border-color .22s ease, box-shadow .22s ease, transform .18s ease;
+    }
+    select option{
+      text-align:center;
+      background:#16111c;
+      color:#f0dfcf;
+    }
+    select:hover{
+      border-color:rgba(234,211,174,.82);
+      box-shadow:
+        inset 0 0 0 1px rgba(184,151,90,.24),
+        0 0 0 1px rgba(184,151,90,.12),
+        0 0 14px rgba(184,151,90,.18),
+        0 0 28px rgba(157,108,127,.14),
+        0 12px 24px rgba(0,0,0,.26);
+      transform:translateY(-1px);
+    }
+    select:focus{
+      outline:none;
+      border-color:rgba(234,211,174,.9);
+      box-shadow:
+        inset 0 0 0 1px rgba(184,151,90,.22),
+        0 0 0 2px rgba(184,151,90,.16),
+        0 12px 24px rgba(0,0,0,.3);
+    }
+    .selector-card{
+      display:flex;
+      flex-direction:column;
+      min-height:560px;
+    }
+    .selector-card .selector-content{
+      flex:1 1 auto;
+    }
+    .selector-card .selector-bottom{
+      display:flex;
+      justify-content:center;
+      margin-top:18px;
+    }
+    .selector-card .note{
+      margin-bottom:26px;
+    }
+    .row > .ancient-select-wrap{
+      margin-right:22px;
+    }
+    .ancient-select-wrap{
+      position:relative;
+      display:inline-block;
+    }
+    .ancient-select-wrap:before,
+    .ancient-select-wrap:after{
+      content:"✦";
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      color:rgba(184,151,90,.72);
+      font-size:.8rem;
+      pointer-events:none;
+    }
+    .ancient-select-wrap:before{ left:-20px; }
+    .ancient-select-wrap:after{ right:-20px; }
+
+    .stat{
+      display:flex; justify-content:space-between; align-items:center;
+      padding:12px 14px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(184,151,90,.14);
+      margin-top:10px;
+      min-height:70px;
+    }
+    .clickable-stat{cursor:pointer; transition:border-color .22s ease, box-shadow .22s ease, transform .18s ease;}
+    .clickable-stat:hover{border-color:rgba(234,211,174,.5); box-shadow:0 0 14px rgba(184,151,90,.12); transform:translateY(-1px);} 
+    .big{font-size:1.2rem; color:#e7d0a1}
+    .memory-box,.note{
+      background:linear-gradient(135deg, rgba(184,151,90,.08), rgba(157,108,127,.05));
+      border:1px dashed rgba(184,151,90,.28);
+      padding:12px 14px;
+      margin-top:12px;
+      color:#eaded4;
+      font-size:1.02rem;
+    }
+    .note{border-left:3px solid rgba(184,151,90,.7)}
+    .mini{font-size:.92rem; color:var(--muted)}
+    .tag{
+      display:inline-block;
+      padding:6px 10px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(184,151,90,.18);
+      color:#ecd8b6;
+      font-size:.8rem;
+      margin-bottom:10px;
+    }
+    .question{
+      font-size:1.15rem;
+      color:var(--text);
+      margin-bottom:10px;
+      text-align:center;
+    }
+    .flashcard{
+      perspective:1000px;
+      min-height:540px;
+      margin-top:16px;
+      position:relative;
+      overflow:visible;
+    }
+    .flashcard.foggy-marker::before,
+    .flashcard.foggy-marker::after{
+      content:"✧";
+      position:absolute;
+      top:12px;
+      color:#e4c184;
+      font-family:"Cinzel", serif;
+      font-size:1.1rem;
+      text-shadow:0 0 8px rgba(184,151,90,.35);
+      z-index:5;
+      pointer-events:none;
+    }
+    .flashcard.foggy-marker::before{left:14px;}
+    .flashcard.foggy-marker::after{right:14px;}
+    .flash-inner{
+      position:relative;
+      width:100%;
+      min-height:540px;
+      transform-style:preserve-3d;
+      transition:transform .6s ease;
+    }
+    .flashcard.flipped .flash-inner{transform:rotateY(180deg)}
+    .face{
+      position:absolute; inset:0;
+      backface-visibility:hidden;
+      padding:28px 30px;
+      display:flex; flex-direction:column; justify-content:center; align-items:center;
+      border:1px solid rgba(184,151,90,.18);
+      text-align:center;
+      overflow:hidden;
+    }
+    .face.back{
+      justify-content:center;
+      gap:12px;
+      padding-top:52px;
+      overflow-y:auto;
+      scrollbar-width:thin;
+      scrollbar-color:rgba(184,151,90,.55) rgba(255,255,255,.04);
+    }
+    .face.back .question{
+      width:min(100%, 900px);
+      margin:0 auto;
+      line-height:1.34;
+      font-size:clamp(.98rem, 1.45vw, 1.1rem);
+    }
+    #flashHook{
+      width:min(100%, 900px);
+      margin:0 auto;
+      text-align:left;
+      line-height:1.34;
+      font-size:clamp(.94rem, 1.35vw, 1.02rem);
+    }
+    #flashHook strong{
+      color:#f0dfbf;
+    }
+    #flashHook .flash-golden-panel{
+      text-align:left;
+    }
+    #flashHook .flash-memory-grid{
+      max-width:900px;
+      margin-left:auto;
+      margin-right:auto;
+    }
+    @media (max-width: 720px){
+      .flashcard, .flash-inner{min-height:620px;}
+      .face{padding:24px 18px;}
+      .face.back{justify-content:center;}
+      .face.back .question{font-size:.96rem; line-height:1.32;}
+      #flashHook{font-size:.94rem; line-height:1.32;}
+    }
+    .face:before{
+      content:"";
+      position:absolute; inset:7px;
+      border:1px solid rgba(184,151,90,.1);
+      pointer-events:none;
+    }
+    .front{
+      background:
+        radial-gradient(circle at top left, rgba(184,151,90,.08), transparent 24%),
+        linear-gradient(135deg, rgba(27,20,34,.94), rgba(16,12,23,.94));
+    }
+    .back{
+      transform:rotateY(180deg);
+      background:
+        radial-gradient(circle at bottom right, rgba(157,108,127,.08), transparent 22%),
+        linear-gradient(135deg, rgba(23,20,34,.96), rgba(17,13,25,.96));
+    }
+    .answers{display:grid; gap:12px; margin-top:16px}
+    .answer{
+      text-align:left;
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      padding:12px;
+      border-radius:0;
+      border:1px solid rgba(184,151,90,.14);
+      font-size:1.02rem;
+      position:relative;
+      overflow:visible;
+      isolation:isolate;
+      transition:opacity .22s ease, filter .22s ease, border-color .22s ease, background .22s ease, box-shadow .22s ease;
+    }
+    .answer .sparkle-cluster{display:none;}
+    .answer.correct .sparkle-cluster{display:block;}
+    .answers .answer:hover:before{height:0 !important;}
+    .answers .answer:hover{
+      color:var(--text);
+      transform:none;
+      border-color:rgba(184,151,90,.28);
+      box-shadow:0 0 0 1px rgba(184,151,90,.08) inset;
+    }
+.answer.correct{
+      outline:1px solid rgba(255,241,196,.44);
+      border-color:rgba(255,241,196,.62);
+      background:
+        radial-gradient(circle at 18% 22%, rgba(255,241,196,.10), transparent 28%),
+        linear-gradient(135deg, rgba(255,248,230,.065), rgba(184,151,90,.055), rgba(157,108,127,.055));
+      box-shadow:
+        0 0 0 1px rgba(255,241,196,.12) inset,
+        0 0 16px rgba(255,241,196,.12),
+        0 0 28px rgba(184,151,90,.09);
+      animation:smoothCorrectGlow 1.15s ease-out;
+      overflow:hidden;
+    }
+
+    .answer.correct::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:1;
+      background:linear-gradient(
+        115deg,
+        transparent 0%,
+        rgba(255,241,196,.07) 30%,
+        rgba(255,255,255,.18) 48%,
+        rgba(255,241,196,.08) 62%,
+        transparent 100%
+      );
+      transform:translateX(-105%);
+      animation:smoothCorrectSweep 1.25s ease-out;
+      mix-blend-mode:screen;
+    }
+
+    .answer.correct::after{
+      content:"✦";
+      position:absolute;
+      top:10px;
+      right:14px;
+      color:rgba(255,241,196,.92);
+      font-size:.82rem;
+      line-height:1;
+      pointer-events:none;
+      z-index:2;
+      opacity:0;
+      text-shadow:
+        0 0 6px rgba(255,241,196,.5),
+        0 0 14px rgba(184,151,90,.24);
+      animation:smoothCorrectSparkle 1.25s ease-out;
+    }
+
+    .answer.correct .sparkle-cluster{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:3;
+      opacity:1;
+    }
+
+    .answer.correct .sparkle-cluster span{
+      position:absolute;
+      color:rgba(255,241,196,.92);
+      text-shadow:
+        0 0 6px rgba(255,241,196,.55),
+        0 0 14px rgba(184,151,90,.28);
+      opacity:0;
+      animation:sparkleTwinkle 1.8s ease-out forwards;
+    }
+
+    .answer.correct .sparkle-cluster span:nth-child(1){
+      top:12%;
+      left:10%;
+      font-size:.62rem;
+      animation-delay:.05s;
+    }
+
+    .answer.correct .sparkle-cluster span:nth-child(2){
+      top:18%;
+      right:16%;
+      font-size:.78rem;
+      animation-delay:.18s;
+    }
+
+    .answer.correct .sparkle-cluster span:nth-child(3){
+      bottom:16%;
+      left:22%;
+      font-size:.7rem;
+      animation-delay:.28s;
+    }
+
+    .answer.correct .sparkle-cluster span:nth-child(4){
+      bottom:12%;
+      right:14%;
+      font-size:.62rem;
+      animation-delay:.42s;
+    }
+
+    .answer.correct .sparkle-cluster span:nth-child(5){
+      top:48%;
+      left:50%;
+      font-size:.82rem;
+      animation-delay:.16s;
+    }
+
+    @keyframes smoothCorrectGlow{
+      0%{filter:brightness(.96); transform:scale(.995);}
+      42%{filter:brightness(1.06); transform:scale(1.006);}
+      100%{filter:brightness(1); transform:scale(1);}
+    }
+
+    @keyframes smoothCorrectSweep{
+      0%{transform:translateX(-105%); opacity:0;}
+      22%{opacity:1;}
+      100%{transform:translateX(105%); opacity:0;}
+    }
+
+    @keyframes smoothCorrectSparkle{
+      0%{opacity:0; transform:translateY(3px) scale(.9);}
+      35%{opacity:1; transform:translateY(0) scale(1);}
+      100%{opacity:0; transform:translateY(-4px) scale(1.04);}
+    }
+
+    @keyframes sparkleTwinkle{
+      0%{
+        opacity:0;
+        transform:scale(.4) translateY(6px);
+      }
+      22%{
+        opacity:1;
+        transform:scale(1) translateY(0);
+      }
+      65%{
+        opacity:.9;
+      }
+      100%{
+        opacity:0;
+        transform:scale(1.15) translateY(-6px);
+      }
+    }
+    .answer.correct .spell-tail, .answer .spell-tail{display:none;}
+.answer.incorrect{outline:2px solid rgba(183,123,133,.78)}
+    .answer.dimmed{
+      opacity:.5;
+      filter:saturate(.78) brightness(.88);
+    }
+    @keyframes edgeSpell {
+      0% { transform:rotate(0deg) scale(.985); opacity:0; }
+      18% { opacity:1; }
+      68% { transform:rotate(135deg) scale(1); opacity:.95; }
+      100% { transform:rotate(255deg) scale(1.005); opacity:.42; }
+    }
+    @keyframes innerBlessing {
+      0% { opacity:0; }
+      24% { opacity:.55; }
+      100% { opacity:0; }
+    }
+    .hidden{display:none}
+    .meter{
+      width:100%; height:12px; overflow:hidden;
+      background:#120d18; border:1px solid rgba(184,151,90,.14);
+    }
+    .meter > span{
+      display:block; height:100%; width:0%;
+      background:linear-gradient(90deg, var(--gold), var(--rose), var(--plum));
+      transition:width .35s ease;
+    }
+    .table{
+      width:100%; border-collapse:collapse; margin-top:12px; font-size:1rem;
+    }
+    .table th,.table td{
+      border-bottom:1px solid rgba(184,151,90,.11);
+      padding:10px; text-align:left; vertical-align:top;
+    }
+    .divider{
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(184,151,90,.26), transparent);
+      margin:16px 0;
+    }
+
+    .golden-ticket{
+      position:relative;
+      padding:26px 24px;
+      text-align:center;
+      background:
+        radial-gradient(circle at top left, rgba(184,151,90,.14), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(157,108,127,.10), transparent 26%),
+        linear-gradient(135deg, rgba(34,25,14,.95), rgba(24,18,28,.94));
+      border:1px solid rgba(231,208,161,.38);
+      box-shadow:0 0 0 1px rgba(184,151,90,.16) inset, 0 18px 40px rgba(0,0,0,.28);
+      margin-top:14px;
+      overflow:hidden;
+    }
+    .golden-ticket:before{
+      content:"";
+      position:absolute; inset:9px;
+      border:1px solid rgba(231,208,161,.18);
+      pointer-events:none;
+    }
+    .golden-ticket .ticket-tag{
+      display:inline-block;
+      margin-bottom:12px;
+      padding:6px 12px;
+      border:1px solid rgba(231,208,161,.22);
+      color:#f0dfbf;
+      font-family:"Cinzel", serif;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      background:rgba(255,255,255,.03);
+      font-size:.78rem;
+    }
+    .golden-ticket h3{
+      margin:0 0 10px;
+      font-size:1.15rem;
+      color:#f0dfbf;
+    }
+    .golden-ticket p{
+      margin:0 auto 10px;
+      max-width:700px;
+      color:#dbcac5;
+    }
+    .ticket-score{
+      display:flex;
+      justify-content:center;
+      gap:16px;
+      flex-wrap:wrap;
+      margin:14px 0 16px;
+    }
+    .ticket-pill{
+      min-width:160px;
+      padding:12px 14px;
+      border:1px solid rgba(231,208,161,.2);
+      background:rgba(255,255,255,.035);
+    }
+    .ticket-pill strong{display:block; font-family:"Cinzel", serif; letter-spacing:.1em; color:#f0dfbf; font-size:.82rem; text-transform:uppercase; margin-bottom:4px;}
+
+    .footer{
+      margin-top:24px;
+      text-align:center;
+      color:var(--muted);
+      padding:20px;
+      font-style:italic;
+    }
+    .moon{font-size:1rem; color:#efdcb2; margin-right:8px}
+    .prompt-input{
+      width:100%;
+      padding:12px;
+      border:1px solid rgba(184,151,90,.18);
+      background:rgba(255,255,255,.035);
+      color:var(--text);
+      font-size:1.06rem;
+    }
+    .missed-item{
+      position:relative;
+      padding-right:38px;
+    }
+    .star-mark{
+      position:absolute;
+      top:12px;
+      right:14px;
+      color:#e4c184;
+      font-family:"Cinzel", serif;
+      font-size:1rem;
+    }
+    .star-mark.left{
+      left:14px;
+      right:auto;
+    }
+    #missedList .question, #missedList h3, #missedList .toolbar, #missedList .memory-box{
+      text-align:center;
+      justify-content:center;
+    }
+    .archive-item{
+      margin-top:12px;
+    }
+    .archive-meta{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin:8px 0 12px;
+    }
+    .archive-pill{
+      border:1px solid rgba(184,151,90,.18);
+      background:rgba(255,255,255,.03);
+      color:#ecd8b6;
+      padding:5px 9px;
+      font-size:.92rem;
+    }
+    .archive-options{
+      width:min(100%, 760px);
+      margin:10px auto 0;
+      text-align:left;
+      color:#eaded4;
+    }
+    .archive-options div{
+      padding:6px 0;
+      border-bottom:1px solid rgba(184,151,90,.08);
+    }
+
+    .temple-title {
+      position: relative;
+      color: #e7d0a1;
+      letter-spacing: 0.25em;
+      text-shadow:
+        0 0 6px rgba(212,175,55,0.45),
+        0 0 14px rgba(184,151,90,0.35);
+      animation: sigilGlow 4s ease-in-out infinite;
+      overflow: hidden;
+    }
+    @keyframes sigilGlow {
+      0% {
+        text-shadow:
+          0 0 4px rgba(212,175,55,0.25),
+          0 0 8px rgba(184,151,90,0.2);
+      }
+      50% {
+        text-shadow:
+          0 0 12px rgba(212,175,55,0.7),
+          0 0 22px rgba(184,151,90,0.5);
+      }
+      100% {
+        text-shadow:
+          0 0 4px rgba(212,175,55,0.25),
+          0 0 8px rgba(184,151,90,0.2);
+      }
+    }
+    .temple-title::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -40%;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.15), transparent);
+      animation: shimmerPass 6s infinite;
+    }
+    @keyframes shimmerPass {
+      0% { left: -40%; }
+      100% { left: 120%; }
+    }
+    .correct-aurora {
+      position: relative;
+      overflow: hidden;
+      animation: auroraSettle 0.95s ease;
+    }
+    .correct-aurora::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      background: linear-gradient(115deg, transparent 0%, rgba(212,175,55,.08) 34%, rgba(255,244,214,.12) 50%, rgba(184,151,90,.08) 66%, transparent 100%);
+      opacity: 0;
+      transform: translateX(-18%);
+      animation: auroraSweep 0.95s ease;
+      mix-blend-mode: screen;
+    }
+    @keyframes auroraSettle {
+      0% { box-shadow: 0 0 0 rgba(212,175,55,0); filter: brightness(1); }
+      45% { box-shadow: 0 0 12px rgba(212,175,55,.14), 0 0 22px rgba(184,151,90,.10), inset 0 0 0 1px rgba(255,244,214,.18); filter: brightness(1.03); }
+      100% { box-shadow: 0 0 0 rgba(212,175,55,0); filter: brightness(1); }
+    }
+    @keyframes auroraSweep {
+      0% { opacity: 0; transform: translateX(-18%); }
+      38% { opacity: .9; }
+      100% { opacity: 0; transform: translateX(18%); }
+    }
+    .channel-activate {
+      animation: channelActivate 0.55s ease;
+    }
+    @keyframes channelActivate {
+      0% { opacity: 0.55; transform: translateY(8px) scale(0.995); filter: brightness(0.95); }
+      60% { opacity: 1; transform: translateY(0) scale(1.01); filter: brightness(1.04); }
+      100% { opacity: 1; transform: translateY(0) scale(1); filter: brightness(1); }
+    }
+    .channel-activate::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(120deg, transparent 0%, rgba(212,175,55,0.06) 35%, rgba(255,245,220,0.10) 50%, rgba(212,175,55,0.06) 65%, transparent 100%);
+      animation: activationSweep 0.65s ease;
+    }
+    @keyframes activationSweep {
+      0% { transform: translateX(-30%); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translateX(30%); opacity: 0; }
+    }
+    #flashcards, #quiz, #teacherLogicPanel, #memoryLanternsPanel {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sacred-cycle-overlay{
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      pointer-events:none;
+      opacity:0;
+      z-index:9999;
+      background:radial-gradient(circle at center, rgba(184,151,90,.16), rgba(7,6,10,.18) 35%, rgba(7,6,10,0) 70%);
+      transition:opacity .45s ease;
+    }
+    .sacred-cycle-overlay.show{opacity:1;}
+    .sacred-cycle-burst{
+      position:relative;
+      min-width:min(92vw, 760px);
+      padding:34px 26px;
+      text-align:center;
+      border:1px solid rgba(231,208,161,.42);
+      background:
+        radial-gradient(circle at top left, rgba(184,151,90,.18), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(157,108,127,.16), transparent 24%),
+        linear-gradient(135deg, rgba(34,25,14,.96), rgba(24,18,28,.96));
+      box-shadow:0 0 0 1px rgba(184,151,90,.18) inset, 0 24px 64px rgba(0,0,0,.42), 0 0 40px rgba(184,151,90,.14);
+      transform:scale(.92) translateY(16px);
+      transition:transform .45s ease, opacity .45s ease;
+      overflow:hidden;
+    }
+    .sacred-cycle-overlay.show .sacred-cycle-burst{transform:scale(1) translateY(0);}
+    .sacred-cycle-burst:before,
+    .sacred-cycle-burst:after{
+      content:"✦";
+      position:absolute;
+      top:18px;
+      color:rgba(255,241,196,.95);
+      font-size:1.05rem;
+      text-shadow:0 0 8px rgba(255,241,196,.4), 0 0 18px rgba(212,175,55,.22);
+      animation:sacredDrift 2.6s ease-in-out infinite;
+    }
+    .sacred-cycle-burst:before{left:20px;}
+    .sacred-cycle-burst:after{right:20px; animation-delay:.35s;}
+    .sacred-cycle-kicker{
+      display:inline-block;
+      padding:6px 12px;
+      border:1px solid rgba(231,208,161,.24);
+      color:#f0dfbf;
+      font-family:"Cinzel", serif;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      background:rgba(255,255,255,.03);
+      font-size:.74rem;
+      margin-bottom:12px;
+    }
+    .sacred-cycle-title{
+      font-family:"Cinzel", serif;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:#f3e3c2;
+      font-size:clamp(1rem, 2vw, 1.28rem);
+      margin:0 0 10px;
+    }
+    .sacred-cycle-text{max-width:620px; margin:0 auto; color:#eaded4; font-size:1.06rem;}
+    .mastered-glow{animation:masteredGlow 1.25s ease;}
+    @keyframes masteredGlow{
+      0%{box-shadow:0 0 0 rgba(212,175,55,0); transform:scale(1);}
+      35%{box-shadow:0 0 22px rgba(212,175,55,.28), 0 0 42px rgba(184,151,90,.18); transform:scale(1.01);}
+      100%{box-shadow:0 0 0 rgba(212,175,55,0); transform:scale(1);}
+    }
+    @keyframes sacredDrift{
+      0%,100%{transform:translateY(0) scale(1); opacity:.82;}
+      50%{transform:translateY(-6px) scale(1.08); opacity:1;}
+    }
+
+
+    .flash-memory-grid{
+      width:100%;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+      grid-template-areas:
+        "differential trap"
+        "lantern board";
+      gap:10px;
+      margin-top:10px;
+      text-align:left;
+      align-items:stretch;
+    }
+    .flash-memory-grid .flash-memory-cell:nth-child(1){grid-area:differential;}
+    .flash-memory-grid .flash-memory-cell:nth-child(2){grid-area:trap;}
+    .flash-memory-grid .flash-memory-cell:nth-child(3){grid-area:lantern;}
+    .flash-memory-grid .flash-memory-cell:nth-child(4){grid-area:board;}
+    .flash-memory-cell{
+      border:1px solid rgba(184,151,90,.16);
+      background:rgba(255,255,255,.026);
+      padding:10px 11px;
+      min-height:64px;
+      height:100%;
+    }
+    .flash-memory-cell strong{
+      display:block;
+      color:#f0dfbf;
+      font-family:"Cinzel", serif;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-size:.72rem;
+      margin-bottom:4px;
+    }
+
+
+    /* Flashcard panel readability system */
+    .flash-reveal{
+      width:min(100%, 900px);
+      margin:0 auto;
+      text-align:left;
+      line-height:1.36;
+    }
+    .compact-reveal{
+      display:grid;
+      gap:10px;
+    }
+    .flash-answer-panel,
+    .flash-why-panel,
+    .flash-golden-panel{
+      border:1px solid rgba(184,151,90,.18);
+      background:rgba(255,255,255,.035);
+      padding:11px 13px;
+      line-height:1.32;
+    }
+    .flash-answer-panel{
+      text-align:center;
+      font-size:clamp(1.02rem, 1.45vw, 1.16rem);
+      color:#f3e3c2;
+      background:linear-gradient(135deg, rgba(184,151,90,.075), rgba(157,108,127,.04));
+    }
+    .flash-why-panel strong,
+    .flash-golden-panel strong,
+    .flash-memory-cell strong{
+      color:#f0dfbf;
+    }
+    .flash-golden-panel{
+      margin-bottom:10px;
+      border-color:rgba(231,208,161,.26);
+      background:linear-gradient(135deg, rgba(184,151,90,.08), rgba(157,108,127,.045));
+    }
+    .flash-memory-cell{
+      line-height:1.28;
+    }
+    @media (max-width: 520px){
+      #rapidAnswer .flash-memory-grid{grid-template-columns:1fr; grid-template-areas:none;}
+      #rapidAnswer .flash-memory-grid .flash-memory-cell{grid-area:auto;}
+      #flashHook .flash-memory-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+    }
+
+  
+  .sparkle-reveal{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(255,241,196,.38) !important;
+  background:
+    linear-gradient(135deg, rgba(255,248,230,.09), rgba(184,151,90,.08)),
+    rgba(255,255,255,.03) !important;
+  box-shadow:
+    0 0 18px rgba(255,241,196,.12),
+    0 0 32px rgba(212,175,55,.10),
+    inset 0 0 0 1px rgba(255,241,196,.08);
+  animation:sparklePulse 1.6s ease;
+}
+
+.sparkle-reveal::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255,255,255,.04) 25%,
+    rgba(255,241,196,.28) 45%,
+    rgba(255,255,255,.06) 60%,
+    transparent 100%
+  );
+  transform:translateX(-120%);
+  animation:sparkleSweep 1.4s ease;
+  pointer-events:none;
+  mix-blend-mode:screen;
+}
+
+.sparkle-reveal{
+  position:relative;
+  overflow:hidden;
+  padding-top:20px;
+}
+
+.sparkle-reveal::after{
+  content:"✦ ✧ ✦";
+  position:absolute;
+  top:10px;
+  right:16px;
+
+  display:flex;
+  align-items:center;
+  gap:.28em;
+
+  color:rgba(255,241,196,.92);
+  font-size:.72rem;
+  line-height:1;
+
+  pointer-events:none;
+  user-select:none;
+
+  text-shadow:
+    0 0 8px rgba(255,241,196,.55),
+    0 0 18px rgba(212,175,55,.28);
+
+  opacity:.95;
+
+  z-index:0;
+}
+
+.sparkle-reveal > *{
+  position:relative;
+  z-index:1;
+}
+
+@keyframes sparkleSweep{
+  0%{transform:translateX(-120%); opacity:0;}
+  20%{opacity:1;}
+  100%{transform:translateX(120%); opacity:0;}
+}
+
+@keyframes sparklePulse{
+  0%{
+    transform:scale(.985);
+    filter:brightness(.92);
+  }
+  45%{
+    transform:scale(1.01);
+    filter:brightness(1.08);
+  }
+  100%{
+    transform:scale(1);
+    filter:brightness(1);
+  }
+}
+
+
+    .diagnostic-path{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.path-step,.overview-card,.memory-lantern-card{position:relative;background:linear-gradient(135deg,rgba(184,151,90,.08),rgba(157,108,127,.05));border:1px solid rgba(184,151,90,.2);padding:18px}.path-step:before,.overview-card:before,.memory-lantern-card:before{content:"";position:absolute;inset:6px;border:1px solid rgba(184,151,90,.08);pointer-events:none}.path-step strong{display:block;font-family:"Cinzel",serif;letter-spacing:.1em;text-transform:uppercase;color:#ead3ae;margin-bottom:8px}.path-step span{color:var(--muted)}.overview-grid,.memory-lantern-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:14px}.overview-card h3{font-size:1rem}.memory-lantern-card h3{font-size:.82rem}.overview-card p,.memory-lantern-card p{font-size:1rem}.symptom-list{margin:8px 0 12px;padding-left:1.25rem;text-align:left}.symptom-list li{margin:4px 0;line-height:1.35}.question .flash-front-question{display:block;margin-bottom:12px}.question .symptom-list{display:block;width:fit-content;margin:0 auto;padding-left:1.25rem;max-width:90%;text-align:left;list-style-position:outside}.question .symptom-list li{text-align:left}.overview-card .clinical-label{display:block;margin-top:10px}.drag-bank,.drop-grid{display:grid;gap:12px}.drag-bank{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin:18px 0}.drag-chip{background:linear-gradient(135deg,rgba(33,24,40,.96),rgba(20,15,28,.96));border:1px solid rgba(184,151,90,.35);padding:13px;color:var(--text);cursor:grab}.drop-grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}.drop-zone{min-height:155px;border:1px dashed rgba(184,151,90,.42);padding:14px;background:linear-gradient(135deg,rgba(184,151,90,.06),rgba(157,108,127,.04))}.drop-zone h3{font-size:.78rem}.sort-correct{background:rgba(142,168,146,.18)!important}.sort-wrong{background:rgba(188,138,145,.18)!important}.selector-card #memoryLanternContent{width:100%}@media(max-width:760px){.diagnostic-path{grid-template-columns:1fr}.overview-grid,.memory-lantern-grid{grid-template-columns:1fr}}
+    .pattern-system-panel{position:relative;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:radial-gradient(circle at left center,rgba(184,151,90,.08),transparent 25%),linear-gradient(135deg,rgba(22,17,28,.82),rgba(30,22,38,.76));padding:20px 22px;margin-bottom:20px;text-align:center}.pattern-system-panel:before{content:"";position:absolute;inset:7px;border:1px solid rgba(184,151,90,.1);pointer-events:none}.pattern-system-panel h2{margin-bottom:5px}.pattern-system-buttons{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0 12px}.pattern-system-button{min-width:126px}.pattern-system-button.active,.pattern-system-button.upcoming.active{color:#1b140b;border-color:#d8ba7a;background:linear-gradient(135deg,#c3a263,#9d6c7f);box-shadow:0 0 20px rgba(184,151,90,.18)}.pattern-system-button.upcoming{color:#a999a0;border-color:rgba(184,151,90,.13);background:rgba(255,255,255,.018)}.pattern-system-button:hover,.pattern-system-button.upcoming:hover{color:#1b140b}.pattern-system-button.upcoming:after{content:"COMING SOON";display:block;font-family:"Cinzel",serif;font-size:.52rem;letter-spacing:.12em;color:rgba(184,151,90,.62);margin-top:3px}.pattern-system-button.upcoming:hover:after,.pattern-system-button.upcoming.active:after{color:#3f2b22}.pattern-system-button .grove-icon{color:#efdcb2;margin-right:5px;transition:color .22s ease,text-shadow .22s ease}.pattern-system-button:hover .grove-icon{color:#1b140b;text-shadow:none}.pattern-system-button.active .grove-icon{color:#fff1c4;text-shadow:0 0 9px rgba(255,241,196,.75)}.pattern-notice{min-height:22px;margin:6px 0 0;color:#d8c4ca;font-style:italic}.archive-reference{margin-top:22px}.atlas-entry{margin:12px 0;border:1px solid rgba(184,151,90,.24);background:rgba(16,12,22,.55)}.atlas-entry summary{cursor:pointer;padding:15px 18px;font-family:"Cinzel",serif;color:#ead3ae;letter-spacing:.05em}.atlas-body{padding:0 18px 18px}.atlas-body p{margin:9px 0}.atlas-body strong{color:#efdcb2}.coverage-banner{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0}.coverage-stat{padding:12px;border:1px solid rgba(184,151,90,.24);text-align:center;background:rgba(184,151,90,.06)}.coverage-stat strong{display:block;font-size:1.3rem;color:#efdcb2}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="tag temple-title">✦ Clinical Pattern Study Temple ✦</div>
+      <h1>COM Diagnosis &amp; Management</h1>
+      <p class="subtle">An enchanted board-exam study guide for pattern diagnosis and management, fast recall, clinical logic, pattern recognition, and exam confidence.</p>
+      <div class="hero-divider" aria-hidden="true"><span>✦</span><span>✧</span><span>✦</span></div>
+    </section>
+
+    <section class="pattern-system-panel" aria-labelledby="patternSystemHeading">
+      <h2 id="patternSystemHeading">Pattern Groves</h2>
+      <p class="mini">Choose the diagnostic wing you want to study.</p>
+      <div class="pattern-system-buttons" id="patternSystemButtons">
+        <button class="pattern-system-button active" data-system="liver" onclick="selectPatternSystem('liver')"><span class="grove-icon">✦</span>Liver</button>
+        <button class="pattern-system-button upcoming" data-system="lung" onclick="selectPatternSystem('lung')"><span class="grove-icon">✦</span>Lung</button>
+        <button class="pattern-system-button upcoming" data-system="spleen" onclick="selectPatternSystem('spleen')"><span class="grove-icon">✦</span>Spleen</button>
+        <button class="pattern-system-button upcoming" data-system="kidney" onclick="selectPatternSystem('kidney')"><span class="grove-icon">✦</span>Kidney</button>
+        <button class="pattern-system-button upcoming" data-system="heart" onclick="selectPatternSystem('heart')"><span class="grove-icon">✦</span>Heart</button>
+        <button class="pattern-system-button upcoming" data-system="combined" onclick="selectPatternSystem('combined')"><span class="grove-icon">✦</span>Combined Review</button>
+      </div>
+      <div class="pattern-notice" id="patternSystemNotice" aria-live="polite"></div>
+    </section>
+
+    <div class="grid">
+      <section class="card strong col-9 study-modes-panel">
+        <div>
+          <h2><span class="moon">☾</span>Study Modes</h2>
+          <p>Choose the ritual you want to enter.</p>
+          <div class="toolbar">
+            <button onclick="selectMode('overview')">✦ Overview</button>
+            <button onclick="selectMode('flashcards')">✦ Flashcards</button>
+            <button onclick="selectMode('quiz')">✦ Quiz</button>
+            <button onclick="selectMode('rapidfire')">✦ Rapid Fire ID</button>
+            <button onclick="selectMode('archives')">✦ Sacred Archives</button>
+            <button onclick="selectMode('sorting')">✦ Pattern Sort</button>
+            <button onclick="selectMode('maps')">✦ Concept Maps</button>
+            <button onclick="selectMode('missed')">✦ Missed Rehab</button>
+          </div>
+        </div>
+        <div class="memory-box">
+          <strong>Best sequence:</strong>
+          <div class="mini">Flashcards → Rapid Fire ID → Quiz Chamber → Missed Rehab → Pattern Sort → Clinical Pearls → Memory Lanterns</div>
+        </div>
+      </section>
+
+      <section class="card soft col-3">
+        <h2><span class="moon">✦</span>Your Progress</h2>
+        <p class="mini">Saved in your browser on this device.</p>
+        <div class="stat clickable-stat" id="cardsStat" onclick="resetFlashProgress()" title="Reset sealed card count for this deck"><span>Cards</span><span id="cardsSeen" class="big">0 | 0</span></div>
+        <div class="stat"><span>Quiz</span><span id="quizAccuracy" class="big">0%</span></div>
+        <div class="stat"><span>Rehab</span><span id="rehabScore" class="big">0%</span></div>
+      </section>
+
+
+      <section id="overview" class="card strong col-12 tab">
+        <h2>Clinical Overview</h2>
+        <p><em>Begin with movement, identify the root, locate the reach, then confirm and defend.</em></p>
+        <div class="diagnostic-path">
+          <div class="path-step"><strong>1 · Movement</strong><span>Stuck, fixed, hot, damp, cold, dry, rising, or shaking?</span></div>
+          <div class="path-step"><strong>2 · Root</strong><span>Excess, deficiency, or mixed?</span></div>
+          <div class="path-step"><strong>3 · Reach</strong><span>Is the Liver attacking another system?</span></div>
+          <div class="path-step"><strong>4 · Confirm</strong><span>Tongue body, coat, and pulse position/quality.</span></div>
+          <div class="path-step"><strong>5 · Defend</strong><span>Name the closest differential and why it loses.</span></div>
+          <div class="path-step"><strong>6 · Treat</strong><span>State the principle, then points and formula.</span></div>
+        </div>
+        <div class="divider"></div><h3>Pattern Recognition Compass</h3><div id="overviewCompass" class="overview-grid"></div>
+      </section>
+      <section id="flashcards" class="card strong col-12 tab hidden">
+        <h2>Flashcards</h2>
+        <p><em>Say the key term | pattern | mechanism and Golden Clue out loud before flipping.</em></p>
+        <div class="row">
+          <div class="ancient-select-wrap"><select id="flashDeck" onchange="shuffleCurrentFlashDeck()">
+            <option value="all">All Decks</option>
+            <option value="deck1">Core Patterns</option>
+            <option value="deck2">Deficiency & Rising</option>
+            <option value="deck3">Liver Attacking & Wind</option>
+          </select></div>
+          <button onclick="flipCard()">Flip</button>
+          <button onclick="prevFlashcard()">Previous</button>
+          <button onclick="nextFlashcard()">Next</button>
+        </div>
+
+        <div id="flashcard" class="flashcard" role="button" tabindex="0" aria-label="Flip flashcard">
+          <div class="flash-inner">
+            <div class="face front">
+              <span class="tag" id="flashTag">Deck</span>
+              <div class="question" id="flashFront"></div>
+              <div class="mini"><em>Pause. Answer out loud first.</em></div>
+            </div>
+            <div class="face back">
+              <span class="tag">Revelation</span>
+              <div class="question" id="flashBack"></div>
+              <div class="memory-box" id="flashHook"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar" id="flashActionToolbar">
+          <button onclick="markFlashSealed()">Sealed</button>
+          <button onclick="markFlashFoggy()">Still Foggy</button>
+        </div>
+      </section>
+
+      <section id="quiz" class="card col-12 tab hidden">
+        <h2>Quiz Chamber</h2>
+        <p><em>Choose a deck or use Mixed Set to test whether the knowledge is truly sealed.</em></p>
+        <div class="row">
+          <div class="ancient-select-wrap"><select id="quizDeck">
+            <option value="mixed">Mixed Set</option>
+            <option value="missedOnly">Missed Questions Only</option>
+            <option value="deck1">Core Patterns</option>
+            <option value="deck2">Deficiency & Rising</option>
+            <option value="deck3">Liver Attacking & Wind</option>
+          </select></div>
+          <button onclick="startQuiz()">Begin</button>
+        </div>
+        <div id="quizBox" class="hidden">
+          <div class="stat"><span>Question <span id="quizNum">1</span></span><span id="quizScoreText">0 correct</span></div>
+          <div class="meter"><span id="quizMeter"></span></div>
+          <div class="question" id="quizQuestion" style="margin-top:14px;"></div>
+          <div class="answers" id="quizAnswers"></div>
+          <div id="quizExplain" class="memory-box hidden" style="margin-top:12px;"></div>
+          <div class="toolbar">
+            <button onclick="nextQuizQuestion()">Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="rapidfire" class="card strong col-12 tab hidden">
+        <h2>Rapid Fire ID</h2>
+        <p><em>Instant recognition training. Read the clue, answer out loud, then flip like a flashcard.</em></p>
+        <div class="row">
+          <div class="ancient-select-wrap"><select id="rapidDeck" onchange="startRapidFire()">
+            <option value="all">All Rapid Fire</option>
+            <option value="core">Core Patterns</option>
+            <option value="deficiency">Deficiency &amp; Rising</option>
+            <option value="attacking">Liver Attacking</option>
+            <option value="wind">Liver Wind</option>
+          </select></div>
+          <button onclick="flipRapidCard()">Flip</button>
+          <button onclick="prevRapidFire()">Previous</button>
+          <button onclick="nextRapidFire()">Next</button>
+        </div>
+        <div class="stat"><span>Rapid Prompt</span><span id="rapidCount" class="big">0 | 0</span></div>
+
+        <div id="rapidCard" class="flashcard" role="button" tabindex="0" aria-label="Flip rapid fire card">
+          <div class="flash-inner">
+            <div class="face front">
+              <span class="tag" id="rapidTag">Rapid Fire</span>
+              <div class="question" id="rapidPrompt" style="font-size:1.55rem;"></div>
+              <div class="mini"><em>Pause. Answer out loud first.</em></div>
+            </div>
+            <div class="face back">
+              <span class="tag">Revelation</span>
+              <div class="question" id="rapidAnswerText"></div>
+              <div id="rapidAnswer" class="memory-box" style="margin-top:14px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar" id="rapidActionToolbar">
+          <button onclick="markRapidKnown()">Sealed</button>
+          <button onclick="markRapidFoggy()">Still Foggy</button>
+        </div>
+      </section>
+
+      <section id="archives" class="card strong col-12 tab hidden">
+        <h2>Sacred Archives</h2>
+        <p><em>Complete source-grounded pattern atlas + cumulative clinical practice.</em></p>
+        <div class="coverage-banner">
+          <div class="coverage-stat"><strong>17</strong><span>Named patterns</span></div>
+          <div class="coverage-stat"><strong>17</strong><span>Tongue + pulse profiles</span></div>
+          <div class="coverage-stat"><strong>17</strong><span>Etiology sections</span></div>
+          <div class="coverage-stat"><strong>17</strong><span>Treatment sets</span></div>
+        </div>
+        <div class="row">
+          <div class="ancient-select-wrap"><select id="archiveDeck" onchange="resetArchiveQuizView()">
+            <option value="mixed">Mixed Set</option>
+            <option value="missedOnly">Missed Questions Only</option>
+            <option value="deck1">Core Patterns</option>
+          </select></div>
+          <button onclick="startSacredArchives()">Begin Archive Quiz</button>
+        </div>
+        <div id="archiveQuizBox" class="hidden">
+          <div class="stat"><span>Archive Question <span id="archiveNum">1</span></span><span id="archiveScoreText" class="big">0 correct</span></div>
+          <div class="meter"><span id="archiveMeter"></span></div>
+          <div class="archive-meta" id="archiveMeta"></div>
+          <div class="question" id="archiveQuestion" style="margin-top:14px;"></div>
+          <div class="answers" id="archiveAnswers"></div>
+          <div id="archiveExplain" class="memory-box hidden" style="margin-top:12px;"></div>
+          <div class="toolbar">
+            <button onclick="nextArchiveQuestion()">Next</button>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="archive-reference">
+          <h3>Complete Liver Pattern Atlas</h3>
+          <p class="mini">Open any pattern for symptoms, signs, etiology, acupuncture, formulas, and major herbs from the Test 1 handout.</p>
+          <div id="sourceAtlas"></div>
+        </div>
+      </section>
+
+      <section id="sorting" class="card strong col-12 tab hidden">
+        <h2>Pattern Sorting</h2>
+        <p><em>Drag each clue into its generating pattern, then check your clinical recognition.</em></p>
+        <div id="sortBank" class="drag-bank"></div>
+        <div id="sortZones" class="drop-grid"></div>
+        <div class="toolbar"><button onclick="checkDragSort()">Check Sorting</button><button onclick="resetDragSort()">Reset</button><span id="sortScore" class="big"></span></div>
+      </section>
+
+      <section id="maps" class="card col-12 tab hidden">
+        <h2>Concept Maps</h2>
+        <h3>Liver Pattern Progressions</h3>
+        <table class="table">
+          <tr><th>Framework</th><th>Major Relationship</th><th>High-Yield Clue</th></tr>
+          <tr><td>Constraint</td><td>Liver Qi stagnation may transform into Heat or obstruct Blood</td><td>Variable distension becomes hot or fixed</td></tr>
+          <tr><td>Deficiency</td><td>Blood deficiency may deepen into Yin deficiency</td><td>Pale nourishment failure gains dryness and empty Heat</td></tr>
+          <tr><td>Rising</td><td>Yin deficiency fails to anchor Yang</td><td>Deficient root with upward head symptoms</td></tr>
+        </table>
+
+        <div class="divider"></div>
+
+        <h3>Fire, Yang Rising, and Wind Differentials</h3>
+        <table class="table">
+          <tr><th>Concept</th><th>Category | Role</th><th>Board Shortcut</th></tr>
+          <tr><td>Liver Fire</td><td>Excess Heat rising</td><td>Sudden, loud, dry, red, forceful</td></tr>
+          <tr><td>Liver Yang Rising</td><td>Deficient root, active branch</td><td>Gradual head signs with peeled dryness</td></tr>
+          <tr><td>Internal Wind</td><td>Manifestation requiring a named generator</td><td>Always state Heat, Fire, Yang rising, or Blood deficiency</td></tr>
+        </table>
+      </section>
+
+      <section id="missed" class="card col-12 tab hidden">
+        <h2>Missed Question Rehab</h2>
+        <p><em>These are the questions you missed earlier or the ones most worth rehabbing.</em></p>
+        <div id="missedList"></div>
+      </section>
+
+      <section class="card col-6 selector-card" id="teacherLogicPanel">
+        <div class="selector-content">
+          <h2>✧ Clinical Pearls</h2>
+          <div class="note">
+            Use this section for board-style pattern recognition, differential logic, teacher traps, and high-yield reasoning.
+          </div>
+          <div id="teacherLogicContent">
+            <h3>Most Important Board-Exam Triggers</h3>
+            <table class="table">
+              <tr><th>Seeing this...</th><th>Think this...</th></tr>
+              <tr><td>Shaoyang clue cluster</td><td>Alternating fever & chills + bitter taste + nausea/vomiting + wiry pulse = Xiao Chai Hu Tang.</td></tr>
+              <tr><td>Cold limbs trap</td><td>Si Ni San = Qi constraint; Si Ni Tang = true Yang collapse.</td></tr>
+              <tr><td>Xiao Yao heat signs</td><td>Heat, irritability, or PMS heat = Jia Wei Xiao Yao San.</td></tr>
+              <tr><td>Xie Xin Tang family</td><td>Hot above + cold below + focal epigastric fullness = Ban Xia Xie Xin Tang.</td></tr>
+              <tr><td>Summer-Heat exit route</td><td>No sweating = Xiang Ru San; sweating = Liu Yi San.</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="selector-bottom">
+          <div class="ancient-select-wrap">
+            <select id="teacherLogicSelect" onchange="renderTeacherLogic()">
+              <option value="most_important" selected>Most Important</option>
+              <option value="deck1">Core Patterns</option>
+            <option value="deck2">Deficiency & Rising</option>
+            <option value="deck3">Liver Attacking & Wind</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="card col-6 selector-card" id="memoryLanternsPanel">
+        <div class="selector-content">
+          <h2>✧ Memory Lanterns</h2>
+          <div class="note">
+            Use these vivid recall anchors to separate look-alike formulas, strengthen pattern recognition, and preserve high-yield board triggers.
+          </div>
+          <div id="memoryLanternContent">
+            <h3>Most Important Board-Exam Triggers</h3>
+            <table class="table">
+              <tr><th>Seeing this...</th><th>Think this...</th></tr>
+              <tr><td>Shaoyang</td><td>A door hinge stuck between outside and inside.</td></tr>
+              <tr><td>Si Ni San vs Si Ni Tang</td><td>Traffic stuck vs fire dying.</td></tr>
+              <tr><td>Xiao Yao vs Jia Wei</td><td>The free wanderer gets hot: add Mu Dan Pi + Zhi Zi.</td></tr>
+              <tr><td>Xie Xin Tang</td><td>Hot upstairs, cold downstairs, traffic jam in the kitchen.</td></tr>
+              <tr><td>Summer-Heat formulas</td><td>No sweat = skin gate; sweating = urine river.</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="selector-bottom">
+          <div class="ancient-select-wrap">
+            <select id="memoryLanternSelect" onchange="renderMemoryLanterns()">
+              <option value="most_important" selected>Most Important</option>
+              <option value="deck1">Core Patterns</option>
+            <option value="deck2">Deficiency & Rising</option>
+            <option value="deck3">Liver Attacking & Wind</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="card col-12">
+        <h2>Source Note</h2>
+        <p>This temple is being constructed as a cumulative long-term board exam weapon:<br>fast recall • clinical logic • pattern recognition • differential mastery • exam confidence.</p>
+      </section>
+    </div>
+
+    <div class="footer">Trace the pattern, hear the Golden Clue, and let the answer become inevitable.</div>
+  </div>
+
+  <div id="sacredCycleOverlay" class="sacred-cycle-overlay" aria-hidden="true">
+    <div class="sacred-cycle-burst">
+      <div class="sacred-cycle-kicker">✦ Mastery Sealed ✦</div>
+      <h3 id="sacredCycleTitle" class="sacred-cycle-title">✦ Sacred Cycle Complete ✦</h3>
+      <p id="sacredCycleText" class="sacred-cycle-text">A full study cycle has been sealed.</p>
+    </div>
+  </div>
+
+  <script>
+const STUDY_TEMPLE_ID='cdm301_liver_patterns_test1_master_v3';
+const PATTERN_SYSTEMS={
+  liver:{label:'Liver Patterns',available:true},
+  lung:{label:'Lung Patterns',available:false},
+  spleen:{label:'Spleen Patterns',available:false},
+  kidney:{label:'Kidney Patterns',available:false},
+  heart:{label:'Heart Patterns',available:false},
+  combined:{label:'Combined Review',available:false}
+};
+function selectPatternSystem(system){
+  const selected=PATTERN_SYSTEMS[system]||PATTERN_SYSTEMS.liver;
+  const notice=document.getElementById('patternSystemNotice');
+  document.querySelectorAll('.pattern-system-button').forEach(button=>button.classList.toggle('active',button.dataset.system===system));
+  localStorage.setItem(STUDY_TEMPLE_ID+'_activePatternSystem',system);
+  if(!selected.available){
+    notice.textContent=selected.label+' is prepared for future expansion and will unlock when its study material is added.';
+    return;
+  }
+  notice.textContent='';
+  selectMode('overview');
+}
+window.selectPatternSystem=selectPatternSystem;
+const sourceAtlas=[
+{name:'Liver Qi Stagnation',deck:'Core Patterns',symptoms:'Fluctuating mental state; angry/agitated depression; frustration; hiccups; GB-21-area tension; cold fingers; palpitations at rest; hypochondriac or chest distension that may become pain; migrating joint pain; sighing; yawning; afternoon malaise around 3–4 PM that improves with exercise; inability to mobilize; tight-boring headaches; labile hypertension; plum-pit Qi with throat constriction and difficult swallowing; irregular or skipped cycles; premenstrual distending pain, breast distension, tension, fatigue, and irritability.',tongue:'Dusky; swollen edges like an inner tube; later side ridges; left side may be more swollen; long, dark, dusky sublingual veins; red edges if Heat develops; whole tongue may become red if Heat penetrates deeply.',pulse:'Robust Pounding + Tense Left Middle; Inflated Left Middle when more severe.',etiology:'Repressed emotion, especially frustration; sudden severe anger may create severe stagnation and an Inflated Left Middle.',acupuncture:'GB-34; LIV-2; LIV-3 + LI-4; LIV-13; LIV-14; SJ-6; PC-6; Fishbelly for hiccups; GB-24; SP-21; Dai Mai; plum-pit Qi: ST-40, PC-5, Ren-9, ST-28; menstrual problems: Zigong, BL-32; impotence: BL-35; BL-18; Liver/Lung: LIV-14 + LU-1; Yang Wei Mai.',formulas:'Yue Ju Wan; Chai Hu Shu Gan San; Si Ni San; Xiao Yao San.',herbs:'Chai Hu; Xiang Fu; Yu Jin; Chuan Lian Zi; Li Zhi He; Lu Lu Tong; Ci Ji Li; Qing Pi; Mu Xiang.'},
+{name:'Liver Attacking Spleen and Stomach',deck:'Liver Attacking',symptoms:'Irritability; epigastric and hypochondriac distension/pain; sour or acidic regurgitation with nausea; poor appetite; belching; bloating; nausea; vomiting.',tongue:'Swollen and possibly red sides; dusky body; possible side cracks.',pulse:'Tense or Inflated Left Middle; Robust Pounding + Tense Right Middle.',etiology:'Liver Qi constraint overacting on vulnerable Spleen/Stomach function.',acupuncture:'LIV-3 + LI-4; Ren-12; LIV-14; PC-6; GB-34 for hypochondrium; SJ-6.',formulas:'Chai Hu Shu Gan San; Xiao Yao San; Si Ni San.',herbs:'Use the formula-specific Qi-regulating and harmonizing herbs emphasized in class.'},
+{name:'Liver Attacking Intestines',deck:'Liver Attacking',symptoms:'Digestive problems worse with stress; irritability; abdominal distension and pain; alternating constipation and diarrhea; stools variably formed or loose; flatulence; explosive diarrhea.',tongue:'Underlying Liver Qi stagnation presentation; handout emphasizes pulse more than a unique tongue.',pulse:'Inflated or Tense Left Middle; Robust Pounding + Tense Intestine positions.',etiology:'Constrained Liver Qi dysregulates intestinal movement under emotional stress.',acupuncture:'LIV-3 + LI-4; ST-39; Ren-12; ST-25; SP-15; SJ-6; GB-41; ST-21; SJ-3, possibly with Ren-15 + Ren-12.',formulas:'Tong Xie Yao Fang (Important Formula for Painful Diarrhea).',herbs:'Intestinal Qi regulators: Bing Lang; Zhi Shi; Lai Fu Zi; Hou Po; Mu Xiang; Da Fu Pi.'},
+{name:'Liver Attacking Bladder',deck:'Liver Attacking',symptoms:'Urinary problems aggravated by Liver Qi stagnation; urgency; frequency; painful urination; possible burning if stagnation creates Heat; may resemble interstitial cystitis.',tongue:'Dusky with enlarged sides.',pulse:'Tense or Inflated Left Middle.',etiology:'Vulnerable Bladder from previous infections, Blood stagnation, Kidney Qi/Yang deficiency, or sexual abuse.',acupuncture:'LI-4; LIV-3; Ren-3; BL-32; BL-28, possibly with moxa; LIV-8; SP-9; BL-40; Zigong.',formulas:'No specific formula listed in the source handout.',herbs:'No major herb list given in the source handout.'},
+{name:'Liver Attacking Lungs',deck:'Liver Attacking',symptoms:'Breathing problems worse with stress; sudden dyspnea; unproductive cough; wheezing; panic; chest fullness/tightness; sighing.',tongue:'Underlying Liver Qi stagnation presentation; no separate tongue profile listed.',pulse:'Liver stagnation signs at Left Middle + Qi-deficient qualities at Right Distal.',etiology:'Liver Qi stagnation attacks when the Lungs are vulnerable, disrupting descent of Lung Qi.',acupuncture:'LI-4; LIV-3; LU-7; LU-6; LIV-14 + LU-1, possibly LIV-13; Ren-17; PC-6; Dingchuan. Dr. Shen method: stimulate SP-4 + LIV-8 + PC-6 for about 30 seconds, take 3 deep breaths, repeat 3 times.',formulas:'No specific formula listed in the source handout.',herbs:'No major herb list given in the source handout.'},
+{name:'Liver Blood Stagnation',deck:'Core Patterns',symptoms:'Emotional disturbance; fixed hypochondriac or abdominal pain; painful periods with stabbing pain during menstruation; irregular periods; dark clotted menstrual blood; infertility; abdominal masses; late-stage dry skin, hematemesis, or epistaxis related to portal vein obstruction.',tongue:'Purple edges.',pulse:'Choppy Left Middle.',etiology:'Prolonged Liver Qi stagnation; prolonged substance abuse; lower-burner Blood stasis, possibly with Cold; heavy lifting; tampons; birth control; sex too soon postpartum.',acupuncture:'GB-34; LIV-3 + LI-4; BL-17; BL-18; SP-10; SP-4 + PC-6 to open Chong Mai; SP-8 for menstrual problems; LIV-14; LIV-2 if Heat; Dai Mai.',formulas:'Ge Xia Zhu Yu Tang; Xue Fu Zhu Yu Tang; Shu Gan Wan.',herbs:'Yu Jin; Yan Hu Suo; Dan Shen; Chuan Xiong.'},
+{name:'Liver Heat and Fire',deck:'Core Patterns',symptoms:'Rage/violent outbursts; loud voice; irritability; sudden loud high-pitched tinnitus worse with pressure; deafness; whole-head bursting headache; boat-rocking dizziness; thirst for cold drinks; dry mouth/throat; bitter taste; agitated insomnia and dream-disturbed sleep; dry constipation; dark urine; late epistaxis, hematemesis, hemoptysis, possibly ear bleeding; glaucoma; excessive tearing.',tongue:'Red body with redder sides; yellow dry coat.',pulse:'Tense or Inflated + Pounding Left Middle; Tense-Hollow Full-Overflowing Left Middle or whole pulse; Blood Thick; engorgements; Flooding Excess wave; Rapid.',etiology:'Stagnant Liver Qi in a robust/driven person; diet; alcohol, stimulants including caffeine, or tobacco.',acupuncture:'LIV-2; LIV-3; LIV-2 through LIV-3; LIV-3 through KI-1; GB-20; Taiyang; GB-13; LI-11; LIV-1; Ear Apex bleeding; BL-18 bleed + cup; LIV-5; KI-1.',formulas:'Long Dan Xie Gan Tang; Dang Gui Long Hui Tang.',herbs:'Long Dan Cao; Chuan Lian Zi; Qing Dai; Zhi Zi; Huang Lian; Chi Shao; Mu Dan Pi.'},
+{name:'Liver and Gallbladder Damp-Heat',deck:'Core Patterns',symptoms:'Fever; scanty dark urine; chest/hypochondriac fullness and pain; stone pain may radiate to shoulder/arm; pain behind eyes; jaundice; bitter taste; thick yellow nasal discharge with possible throat irritation; nausea; vomiting; loss of appetite; abdominal distension; vaginal discharge/itching; painful red swollen scrotum.',tongue:'Red body with sticky yellow coat.',pulse:'Slippery + Pounding in Left Middle and Gallbladder positions.',etiology:'Hepatitis; alcohol abuse; diet; emotional stress/Liver Qi stagnation.',acupuncture:'LIV-14; GB-34; BL-18; GB-19 through GB-24; Ren-12; SP-9; LI-11; LIV-2; for Damp: ST-40, Ren-9, ST-28; Dai Mai; DU-6; GB-38; SJ-2 + SJ-3.',formulas:'Long Dan Xie Gan Tang; Dang Gui Long Hui Wan.',herbs:'Long Dan Cao; Huang Qin; Qing Hao; Zhi Zi.'},
+{name:'Stagnation of Cold in the Liver Channel',deck:'Core Patterns',symptoms:'Lower abdominal/bladder-area fullness and distension with pain referring to scrotum/testes and up to hypochondrium; pain relieved by warmth; testicular strain or contracted scrotum; vertex headache; generalized cold; cold hands/feet; vomiting clear watery fluid or dry heaving; possible vaginal contraction.',tongue:'Pale and wet with white coat.',pulse:'Deep, Wiry, Slow.',etiology:'Invasion of exterior Cold.',acupuncture:'Ren-3; LIV-5; LIV-1; LIV-3; reducing method; moxa is applicable.',formulas:'Nuan Gan Jian; ginger bath.',herbs:'Wu Zhu Yu; Wu Yao; Xiao Hui Xiang; Ai Ye; Li Zhi He.'},
+{name:'Liver Qi and Yang Deficiency',deck:'Deficiency & Rising',symptoms:'Able to contemplate but not execute; poor emotional restraint/control/containment; Liver Blood deficiency symptoms because Liver Qi cannot distribute Blood; emotional lability; 3–4 PM fatigue with difficulty recovering but improvement with rest; lassitude; lack of accomplishment; inability to manifest dreams; color blindness; later lymphoma, leukemia, or hepatitis associations in the handout.',tongue:'Pale sides.',pulse:'Feeble, Absent, or Empty Left Middle.',etiology:'Marijuana, psychedelics, or opiates; viral infection including Epstein-Barr or hepatitis; overwork.',acupuncture:'LIV-8; KI-10; LIV-3; BL-43; BL-23; BL-18; DU-4.',formulas:'No single formula listed in the source handout.',herbs:'Sha Yuan Zi; Tu Si Zi; Huang Qi; Ren Shen; Dan Shen; He Shou Wu; Du Zhong; Xu Duan.'},
+{name:'Liver Blood Deficiency',deck:'Deficiency & Rising',symptoms:'Postural dizziness; limb numbness, tingling, or spasm; dull/burning headache worse at night and often premenstrual; waking after 4–5 hours; tired eyes; thinning hair; possible palpitations at rest; blurred/poor night/double vision, photophobia, myopia, color blindness, rectangular dark floaters; burning hypochondrium; migrating peculiar skin sensations; scanty pale menses; weak/cramping muscles; soft nails; menstrual cramps; fatigue/depression worse after menstruation and less immediately relieved by rest.',tongue:'Pale, especially sides; peach-colored sides; thin and dry.',pulse:'Thin or Yielding Partially Hollow Left Middle.',etiology:'Poor Blood-building diet; chronic digestive weakness; prolonged/excessive or sudden blood loss including childbirth; miscarriage; deficient Kidney Essence; insomnia; Liver Qi deficiency that cannot distribute Blood.',acupuncture:'LIV-8; ST-36 + SP-6; Ren-4; BL-18; BL-20; BL-23; BL-7; Yuyao; GB-37; Sea of Blood: BL-11, ST-37, ST-39, Chong Mai; marrow: GB-39; Four Flowers: BL-17 + BL-19; LIV-1 for bleeding; Ren Mai; Yin Wei Mai.',formulas:'Si Wu Tang; Gui Pi Tang; Ren Shen Yang Rong Tang.',herbs:'Shu Di Huang; Zi He Che; He Shou Wu; E Jiao; Gou Qi Zi; Dang Gui; Bai Shao.'},
+{name:'Liver Yin Deficiency',deck:'Deficiency & Rising',symptoms:'All Liver Blood deficiency symptoms + dry eyes; cataracts; acute blindness; high-pitched intermittent tinnitus better with pressure; throbbing headache; nervous agitation; restless dream-disturbed insomnia; malar flush; evening heat; five-palm heat; dry throat; night sweats; thirst for small sips; afternoon fatigue not relieved by naps, with more agitation after napping; short menstrual cycle; brittle nails.',tongue:'Dry, peeled, contracted sides.',pulse:'Left Middle Tight-to-Wiry.',etiology:'Medications.',acupuncture:'LIV-8; ST-36; SP-6; KI-3; KI-6.',formulas:'Yi Guan Jian; Er Zhi Wan; Qi Ju Di Huang Wan.',herbs:'Bai Shao; Gou Qi Zi; Nu Zhen Zi; Shan Zhu Yu; Sang Shen.'},
+{name:'Liver Yang Rising',deck:'Deficiency & Rising',symptoms:'Throbbing temporal/ocular/lateral headache; boat-rocking or ungrounded dizziness; gradual, intermittent high-pitched tinnitus better with pressure; hearing loss; blurred vision; dry mouth/throat only briefly relieved by drinking; insomnia/restlessness; irritability; feeling worked up; volatile temper; possible depression with Qi stagnation.',tongue:'Thin, scarlet red, peeled at edges, indented sides.',pulse:'Tight-Wiry Left Middle; Tense-Hollow Full-Overflowing on the side where stroke may occur.',etiology:'Advanced Liver Yin deficiency fails to anchor Liver Yang.',acupuncture:'LIV-3; SJ-5; PC-6; LI-4; GB-43; GB-38; GB-20; BL-2; GB-9; GB-8; GB-6; SP-6; LIV-8; ST-36; KI-3; KI-6; LIV-5.',formulas:'Tian Ma Gou Teng Yin; Yi Shen Tang.',herbs:'Dai Zhe Shi; Shi Jue Ming; Zhen Zhu Mu; Long Gu; Mu Li; Tian Ma.'},
+{name:'Extreme Heat Generating Wind',deck:'Liver Wind',symptoms:'High fever; convulsions; rigid neck; limb tremor; opisthotonos; severe cases may progress to coma.',tongue:'Stiff, deep red, with thick dry yellow coat.',pulse:'Tense-Hollow Full-Overflowing + Rapid.',etiology:'Exterior Heat enters the Blood level.',acupuncture:'Ear Apex bleeding; LIV-3; Shixuan/Ten Tips bleeding; Jing-Well bleeding; DU-20; DU-16; GB-20; DU-8; DU-14.',formulas:'Ling Jiao Gou Teng Tang.',herbs:'Niu Huang; Gou Teng; Bai Ji Li.'},
+{name:'Liver Fire Generating Wind',deck:'Liver Wind',symptoms:'Tremor; irascibility; angry outbursts; sudden severe tinnitus/deafness; difficulty falling asleep; restlessness; full bursting headache; boat-rocking dizziness; thirst; bitter taste; dry mouth; dream-disturbed sleep; dry constipation; dark urine; epistaxis; hemoptysis; hematemesis.',tongue:'Dark red with redder sides and a dry, thick, rough yellow coat.',pulse:'Tense-Hollow Full-Overflowing, beginning at Right Middle then whole pulse; Rapid. Imminent stroke: Rapid Tight-Hollow Full-Overflowing on the affected side.',etiology:'Severe Liver Fire rises and agitates the sinews into Wind.',acupuncture:'Ear Apex bleeding; LIV-2; LIV-3; GB-20; LI-11; GB-1; SP-6; LIV-1; DU-8; LI-4; LIV-5.',formulas:'Ling Jiao Gou Teng Tang.',herbs:'Niu Huang; Gou Teng; Bai Ji Li.'},
+{name:'Liver Yang Rising Generating Wind',deck:'Liver Wind',symptoms:'Tremor; facial tic; irritability; severe ship-rolling dizziness; gradual discontinuous high-pitched tinnitus/deafness; throbbing headache; dry mouth/throat/eyes; blurred vision; limb numbness/tingling; poor memory; palpitations at rest; severe twitching or writhing hands/feet, dysphagia, unsteady gait, aphasia, facial paralysis.',tongue:'Red/magenta and thin; red shrunken peeled sides; intermittent fine tremor; deviation; stiffness if severe.',pulse:'Floating-Tight; Tight-Wiry Left Middle; Tight-Hollow Full-Overflowing; slightly Rapid.',etiology:'Yin deficiency fails to anchor Yang; rising Yang progresses to Wind.',acupuncture:'LIV-3; GB-20; LI-4; SJ-5; DU-19; SP-6; LIV-8; KI-4.',formulas:'Tian Ma Gou Teng Yin.',herbs:'Shi Jue Ming; Long Gu; Tian Ma.'},
+{name:'Liver Blood Deficiency Generating Wind',deck:'Liver Wind',symptoms:'Fine tremor; spasms; trismus/lockjaw; facial tic; postural dizziness; blurred vision; limb numbness/tingling; poor memory; insomnia; scanty periods.',tongue:'Pale, thin, dry, with peach-colored sides.',pulse:'Thin + Floating-Tight.',etiology:'Deficient Liver Blood fails to nourish the sinews and generates fine Internal Wind.',acupuncture:'LIV-3; LI-4; GB-20; SJ-5; DU-19; SP-6; LIV-18; KI-3; Ren-4; BL-17.',formulas:'E Jiao Ji Zi Huang Tang.',herbs:'E Jiao and egg yolk are named in the formula; review the complete formula composition if required by the course.'}
+];
+const patterns=[["Liver Qi Stagnation","Stuck, distending, variable, stress-sensitive; sighing; PMS","Dusky/swollen edges","Robust Pounding/Tense or Inflated Left Middle"],["Liver Blood Stagnation","Fixed, stabbing, clotted, purple, masses","Purple edges","Choppy Left Middle"],["Liver Heat/Fire","Hot, red, loud, dry, forceful; rage; sudden tinnitus","Red sides, yellow dry coat","Forceful/Tense/Inflated, Rapid"],["Liver/GB Damp-Heat","Heat + sticky/heavy; jaundice, nausea, genital/biliary signs","Red, sticky yellow coat","Slippery and Pounding"],["Cold in Liver Channel","Contracting genital/lower abdominal pain relieved by warmth","Pale, wet, white coat","Deep, Wiry, Slow"],["Liver Qi/Yang Deficiency","Can contemplate but cannot execute; poor containment; rest helps","Pale sides","Feeble, Absent, or Empty Left Middle"],["Liver Blood Deficiency","Pale, scanty, numb, cramping; poor vision; dry hair","Pale/peach, thin, dry","Thin or Yielding Partially Hollow"],["Liver Yin Deficiency","Blood deficiency + dryness + empty Heat","Dry, peeled, contracted sides","Tight-to-Wiry Left Middle"],["Liver Yang Rising","Throbbing temporal headache, boat-rocking dizziness, gradual tinnitus","Thin/scarlet, peeled, indented edges","Tight-Wiry Left Middle"]];
+const cards=[{"deck":"Core Patterns","q":"Which pattern is defined by stress-linked, fluctuating distension, sighing, irritability, and PMS?","a":"Liver Qi stagnation.","w":"Constrained Liver Qi cannot course freely, so symptoms fluctuate with emotion and movement.","c":"Distending + variable + stress-sensitive.","d":"Fixed stabbing pain and purple/clotted signs shift the diagnosis to Blood stagnation.","t":"Do not label cold hands as Yang deficiency when the pulse is tense and movement helps.","m":"A vine tied in a knot: it still has energy, but cannot spread."},{"deck":"Core Patterns","q":"Fixed stabbing pain, dark clots, purple tongue edges, and a Choppy Left Middle pulse indicate what?","a":"Liver Blood stagnation.","w":"Qi has failed to move Blood, creating fixed obstruction and visible stasis signs.","c":"Fixed + sharp + clotted + purple.","d":"Qi stagnation stays more distending, mobile, and variable.","t":"Pain alone is insufficient; seek the stasis cluster.","m":"The flowing river freezes into dark, jagged stones."},{"deck":"Core Patterns","q":"Anger, loud voice, bursting headache, sudden loud tinnitus, thirst, bitter taste, and dry stool indicate what?","a":"Liver Heat/Fire.","w":"Constrained Qi has transformed into Fire, which rises and consumes fluids.","c":"Loud, red, hot, dry, forceful.","d":"Damp-Heat adds stickiness, heaviness, nausea, jaundice, or genital discharge.","t":"Red tongue sides alone do not prove Fire; check coat and deficiency signs.","m":"A dry wildfire races upward to the eyes and ears."},{"deck":"Core Patterns","q":"Sticky yellow coat, Slippery pulse, jaundice or genital discharge with Liver heat signs indicate what?","a":"Liver and Gallbladder Damp-Heat.","w":"Heat combines with Dampness and obstructs the Liver/GB region and lower burner.","c":"Sticky + slippery + heavy + yellow.","d":"Pure Liver Fire is drier, louder, and more upward.","t":"Burning urination alone can occur when stagnation generates Heat.","m":"A hot swamp: yellow, sticky, heavy, and hard to drain."},{"deck":"Core Patterns","q":"Contracting lower abdominal or genital pain relieved by warmth with a Deep Wiry Slow pulse indicates what?","a":"Cold stagnating in the Liver channel.","w":"Cold contracts the Liver channel and blocks Qi in the lower abdomen and genitals.","c":"Contracting pain + warmth relieves.","d":"Deficiency cold is weak and diffuse; this is obstructive channel pain.","t":"Do not miss the genital referral and cold contraction.","m":"An icy rope cinches the lower channel."},{"deck":"Deficiency & Rising","q":"Pale sides, weak Left Middle, lassitude, emotional lability, and “able to contemplate, not execute” indicate what?","a":"Liver Qi/Yang deficiency.","w":"The Liver lacks motive force to distribute Blood and translate intention into action.","c":"Plans exist; execution does not.","d":"Stagnation wants to move but is blocked and improves with exercise; deficiency improves with rest.","t":"Fatigue does not automatically equal deficiency—test movement versus rest.","m":"An architect holds the blueprint but lacks workers."},{"deck":"Deficiency & Rising","q":"Postural dizziness, poor night vision, numbness, cramps, scanty pale menses, and a pale thin dry tongue indicate what?","a":"Liver Blood deficiency.","w":"Blood fails to nourish the eyes, sinews, uterus, hair, skin, nails, and Shen.","c":"Pale + scanty + numb + undernourished.","d":"Yin deficiency adds empty Heat and more pronounced dryness.","t":"Cramps do not automatically mean Wind; look for tremor, tic, or spasm.","m":"A garden with too little irrigation: pale, dry, and poorly nourished."},{"deck":"Deficiency & Rising","q":"What makes Liver Yin deficiency more than Liver Blood deficiency?","a":"Dryness plus empty Heat.","w":"Yin deficiency includes nourishing failure with evening heat, five-palm heat, night sweats, small-sip thirst, and peeled contracted sides.","c":"Blood deficiency + dryness + empty Heat.","d":"Yang rising requires prominent upward head symptoms.","t":"A red tongue can reflect deficiency when peeled rather than yellow-coated.","m":"The lake is low, so heat shimmers from the exposed earth."},{"deck":"Deficiency & Rising","q":"Throbbing temporal headache, boat-rocking dizziness, gradual intermittent tinnitus better with pressure, and peeled sides indicate what?","a":"Liver Yang rising due to Liver Yin deficiency.","w":"Deficient Yin fails to anchor Yang, so Yang rises to the head.","c":"Rising head symptoms on a dry, deficient foundation.","d":"Fire tinnitus is sudden, loud, and worse with pressure.","t":"Do not treat this as pure excess; nourish the root while subduing the branch.","m":"A kite rises because its anchoring lake has dried."},{"deck":"Liver Attacking","q":"Stress-linked reflux, belching, nausea, poor appetite, Left Middle Liver signs plus a tense Right Middle indicate what?","a":"Liver attacking Spleen and Stomach.","w":"Constrained Liver Qi overacts on digestive Qi, disrupting descending and transforming functions.","c":"Stress + epigastric symptoms + Right Middle confirmation.","d":"Damp-Heat needs sticky coat and slippery pulse.","t":"Name the attacked organ, not merely Liver Qi stagnation.","m":"A restless tree root pushes into the kitchen."},{"deck":"Liver Attacking","q":"Alternating constipation and diarrhea, variable stools, flatulence, or explosive diarrhea that worsen with stress indicate what?","a":"Liver attacking the Intestines.","w":"Constrained Liver Qi dysregulates intestinal movement.","c":"Stress controls the bowel switch.","d":"Spleen/Stomach attack centers more on appetite, nausea, belching, and reflux.","t":"Do not diagnose from diarrhea alone; the emotional timing matters.","m":"A nervous gate alternately locks and flies open."},{"deck":"Liver Attacking","q":"Urgency, frequency, or dysuria that flare with frustration, with a dusky enlarged-sided tongue and Tense Left Middle, indicate what?","a":"Liver attacking the Bladder.","w":"Constrained Liver Qi disrupts Bladder function; generated Heat may cause burning.","c":"Urinary flare follows stress.","d":"Damp-Heat has sticky yellow coat, slippery pulse, and stronger damp signs.","t":"Burning does not automatically equal Damp-Heat.","m":"Frustration squeezes the water gate."},{"deck":"Liver Attacking","q":"Stress-triggered sudden dyspnea, dry cough, wheeze, panic, chest tightness, and sighing indicate what?","a":"Liver attacking the Lungs.","w":"Liver Qi counterflows into the chest while Lung Qi fails to descend.","c":"Left Middle stagnation + Right Distal Lung weakness.","d":"Primary Lung pathology lacks the clear stress-linked Liver cluster.","t":"Use both pulse positions to prove the relationship.","m":"A rising branch crowds the bellows in the chest."},{"deck":"Liver Wind","q":"High fever, convulsions, neck rigidity, possible coma, deep-red stiff tongue, and Rapid Overflowing pulse indicate what?","a":"Extreme Heat generating Wind.","w":"Acute exterior Heat has entered the Blood level and stirred internal Wind.","c":"Acute febrile emergency + convulsion.","d":"Deficiency Winds are chronic and lack overwhelming fever.","t":"Wind is the manifestation; always name its generator.","m":"A furnace makes the whole forest thrash."},{"deck":"Liver Wind","q":"Tremor with rage, bursting headache, sudden tinnitus, bitter taste, thirst, constipation, and dark-red dry-coated tongue indicates what?","a":"Liver Fire generating Wind.","w":"Severe Liver Fire rises and agitates the sinews into Wind.","c":"Excess Fire cluster + tremor.","d":"Yang rising Wind has a deficient, peeled, dry root and gradual tinnitus.","t":"Do not stop at “Liver Wind.”","m":"Wildfire whips into a firestorm."},{"deck":"Liver Wind","q":"Tremor or tic plus throbbing headache, severe dizziness, gradual tinnitus, dryness, and a peeled shrunken tongue indicate what?","a":"Liver Yang rising generating Wind.","w":"Yin deficiency permits Yang to rise further and generate Wind.","c":"Rising head signs + deficiency dryness + tremor.","d":"Liver Fire Wind is hotter, louder, forceful, and yellow-coated.","t":"The branch is excess-like, but the root is deficient.","m":"An unanchored kite begins to shudder in the gale."},{"deck":"Liver Wind","q":"Fine tremor, facial tic, numbness, postural dizziness, blurred vision, scanty menses, and pallor indicate what?","a":"Liver Blood deficiency generating Wind.","w":"Blood fails to nourish the sinews, producing fine deficient Wind.","c":"Fine Wind on a pale, scanty, numb foundation.","d":"Extreme Heat Wind is acute, febrile, rigid, and forceful.","t":"Do not call every tremor an excess.","m":"Dry, unfed branches quiver in the slightest breeze."},{"deck":"Clinical Method","q":"What is the six-step order for answering a Liver pattern vignette?","a":"Pattern → mechanism → four discriminating findings → closest differential → treatment principle → key points/formula if asked.","w":"This order makes the diagnosis defensible rather than a symptom guess.","c":"Two symptoms + tongue + pulse prove the pattern.","d":"A formula is not the diagnosis.","t":"Do not list every sign; choose discriminating evidence.","m":"Six stones cross the river from clue to treatment."}];
+const quizzes=[{"deck":"Mixed Set","q":"A patient has premenstrual breast distension, sighing, variable hypochondriac discomfort, and fatigue at 4 PM that improves after a brisk walk. Which pattern best fits?","opts":["Liver Qi/Yang deficiency","Liver Qi stagnation","Liver Blood deficiency","Liver Yin deficiency"],"ans":1,"exp":"The variable distension, emotional timing, and improvement with movement establish Liver Qi stagnation. Deficiency fatigue improves with rest."},{"deck":"Mixed Set","q":"Which finding most decisively shifts a diagnosis from Liver Qi stagnation to Liver Blood stagnation?","opts":["Sighing","Irritability","Fixed stabbing pain with dark clots","Premenstrual breast distension"],"ans":2,"exp":"Fixed stabbing pain, dark clots, purple signs, masses, and a Choppy pulse identify Blood stasis."},{"deck":"Differentials","q":"Which cluster favors Liver/GB Damp-Heat over Liver Fire?","opts":["Sudden loud tinnitus and dry stool","Sticky yellow coat, nausea, jaundice, and Slippery pulse","Bursting headache and thirst for cold drinks","Red eyes and angry outbursts"],"ans":1,"exp":"Damp-Heat adds stickiness, heaviness, digestive obstruction, biliary/genital signs, and a Slippery pulse."},{"deck":"Differentials","q":"Which tinnitus description most supports Liver Yang rising rather than Liver Fire?","opts":["Sudden, loud, worse with pressure","Gradual, intermittent, better with pressure","Low-pitched with copious phlegm","Acute after high fever"],"ans":1,"exp":"Gradual intermittent tinnitus relieved by pressure sits on a deficient Yin foundation; Fire is sudden, loud, and worse with pressure."},{"deck":"Liver Attacking","q":"Frustration repeatedly triggers urinary urgency and frequency. The tongue is dusky with enlarged sides and the Left Middle is Tense. Mild burning is present. Best diagnosis?","opts":["Liver/GB Damp-Heat","Kidney Yang deficiency","Liver attacking Bladder","Liver Fire"],"ans":2,"exp":"Stress linkage plus Liver stagnation signs identify Liver attacking Bladder. Burning may come from stagnation-generated Heat."},{"deck":"Liver Attacking","q":"Which pulse pairing best supports Liver attacking the Lungs?","opts":["Choppy Left Middle only","Tense Left Middle with weak Right Distal","Slippery Right Middle","Deep Wiry Slow bilaterally"],"ans":1,"exp":"Liver stagnation at Left Middle plus Lung Qi deficiency at Right Distal proves the organ relationship."},{"deck":"Liver Wind","q":"A very high fever is followed by convulsions, rigid neck, reduced consciousness, a stiff deep-red tongue, and Rapid Overflowing pulse. Diagnosis?","opts":["Liver Fire generating Wind","Liver Blood deficiency generating Wind","Extreme Heat generating Wind","Liver Yang rising generating Wind"],"ans":2,"exp":"The acute febrile Blood-level picture is Extreme Heat generating Wind."},{"deck":"Liver Wind","q":"A fine hand tremor occurs with pale lips, postural dizziness, numb limbs, blurred vision, and scanty menses. Diagnosis?","opts":["Liver Fire generating Wind","Liver Blood deficiency generating Wind","Extreme Heat generating Wind","Liver Yang rising generating Wind"],"ans":1,"exp":"Fine Wind signs on a pale, undernourished Blood-deficiency foundation indicate Liver Blood deficiency generating Wind."},{"deck":"Deficiency","q":"Which sign makes Liver Yin deficiency more likely than Liver Blood deficiency?","opts":["Scanty pale menses","Blurred night vision","Five-palm heat and night sweats","Muscle cramps"],"ans":2,"exp":"Empty Heat signs and pronounced dryness distinguish Yin deficiency from Blood deficiency."},{"deck":"Deficiency","q":"A patient makes detailed plans but cannot initiate them, has emotional lability, pale tongue sides, and an Empty Left Middle pulse. Best pattern?","opts":["Liver Qi stagnation","Liver Qi/Yang deficiency","Liver Blood stagnation","Liver Yang rising"],"ans":1,"exp":"“Able to contemplate, not execute” with a weak Left Middle pulse reflects deficient Liver motive force."},{"deck":"Clinical Method","q":"Which is the strongest way to defend a pattern diagnosis in a vignette?","opts":["Name a matching formula","Cite one striking symptom","Provide mechanism, two discriminating symptoms, tongue, pulse, and rule out the nearest rival","List every Liver symptom remembered"],"ans":2,"exp":"Clinical thinking requires a coherent mechanism and converging evidence, plus a differential—not a single clue or formula match."},{"deck":"Core Patterns","q":"Contracting testicular and lower abdominal pain improves with warmth. Tongue is pale and wet; pulse Deep, Wiry, Slow. Diagnosis?","opts":["Liver Qi stagnation","Cold stagnating in the Liver channel","Kidney Yin deficiency","Liver Blood stagnation"],"ans":1,"exp":"Cold contracts the Liver channel, producing genital/lower abdominal pain relieved by warmth with pale-wet tongue and Deep Wiry Slow pulse."}];
+const pearlData={"Most Important Board-Exam Triggers":[["Fixed vs moving","Distension and variability point to Qi; fixed stabbing pain, clots, masses, and purple signs point to Blood stasis."],["Dry Fire vs hot swamp","Liver Fire is loud, dry, upward, and forceful. Damp-Heat is sticky, heavy, Slippery, yellow-coated, and often biliary/genital."],["Deficiency ladder","Blood deficiency = pale nourishment failure. Yin deficiency = Blood deficiency plus dryness and empty Heat. Yang rising = Yin deficiency plus dominant upward head symptoms."],["Wind is incomplete","Name the generator: Extreme Heat, Liver Fire, Yang rising, or Blood deficiency."],["Pressure test","Sudden/loud tinnitus worse with pressure favors Fire; gradual/intermittent tinnitus better with pressure favors Yang rising."],["Fatigue test","Stagnation fatigue improves with exercise; deficiency fatigue improves with rest."]],"Core Patterns":[["Progression","Liver Qi stagnation can generate Heat or become Blood stagnation."],["Menstrual timing","Before bleeding: Qi stagnation. Fixed pain and dark clots during bleeding: Blood stasis. Scanty pale flow: Blood deficiency."],["Objective proof","Use tongue body, coat, pulse position/quality, eyes, nails, complexion, and menstrual blood."]],"Liver Attacking":[["Name the target","First establish Liver Qi stagnation; then identify the organ system whose function becomes exaggerated under stress."],["Pulse geography","Left Middle confirms Liver; the additional affected position helps name the attacked organ."],["Bladder trap","Stress-linked burning can be stagnation-generated Heat and does not alone prove Damp-Heat."]],"Deficiency & Rising":[["Mixed root/branch","Yang rising looks excess above but is rooted in deficient Yin below."],["Rest vs movement","Weak initiation and recovery with rest favor Qi/Yang deficiency; blocked tension relieved by movement favors stagnation."],["Tongue coat logic","Peeled sides suggest deficient Yin; yellow dry coat suggests excess Fire."]],"Liver Wind":[["Tempo matters","Extreme Heat Wind is acute and febrile; deficiency Wind is generally chronic and undernourished."],["Fine vs violent","Fine tremor with pallor favors Blood deficiency; convulsion/rigidity with fever favors Extreme Heat."],["Stroke-type branch","Yang rising generating Wind may produce deviation or stroke-like signs on a Yin-deficient root."]]};
+const lanternData={"Most Important Board-Exam Triggers":[["Knot → Stone","Qi stagnation is a flexible knot; Blood stagnation hardens into a fixed purple stone."],["Wildfire → Swamp","Fire is dry and racing upward; Damp-Heat is a sticky yellow swamp."],["Lake → Kite","Yin is the anchoring lake. As it dries, Yang rises like a kite and may shudder into Wind."],["Four Winds","Furnace fever, firestorm rage, unanchored kite, underfed branch."],["Two tinnitus bells","Fire strikes the bell suddenly and hates pressure; deficient rising rings gradually and welcomes pressure."]],"Core Patterns":[["Cold rope","Cold contracts the lower Liver channel like an icy rope; warmth loosens it."],["Traffic jam","Qi stagnation blocks circulation despite adequate force, so extremities can feel cold."]],"Liver Attacking":[["Four invaded rooms","Kitchen = Spleen/Stomach; hallway gate = Intestines; water gate = Bladder; bellows = Lungs."],["Stress compass","Follow the organ function that predictably changes when emotion tightens the Liver."]],"Deficiency & Rising":[["Empty architect","Qi/Yang deficiency has blueprints but no workers."],["Dry garden","Blood deficiency cannot irrigate eyes, sinews, uterus, hair, skin, or nails."],["Heat shimmer","Yin deficiency exposes dry earth; empty Heat shimmers in the evening."]],"Liver Wind":[["Generator labels","Never write only “Wind.” Attach the weather-maker that caused it."],["Underfed branch","Blood-deficient sinews quiver because they are not nourished, not because an excess storm arrived."]]};
+patterns.splice(0,patterns.length,
+['Liver Qi Stagnation','Variable distension; sighing; irritability; PMS; improves with exercise','Dusky with swollen edges; possible red edges if Heat develops','Robust Pounding + Tense or Inflated Left Middle'],
+['Liver Attacking Spleen and Stomach','Stress-linked reflux; belching; nausea; poor appetite; epigastric bloating','Dusky with swollen or red sides; possible side cracks','Tense/Inflated Left Middle + Robust Pounding/Tense Right Middle'],
+['Liver Attacking Intestines','Stress-linked abdominal pain; alternating constipation and diarrhea; flatulence; explosive stools','Underlying Liver Qi stagnation tongue; no unique tongue specified','Tense/Inflated Left Middle + Robust Pounding/Tense Intestine positions'],
+['Liver Attacking Bladder','Stress-linked urgency; frequency; dysuria; possible burning from constrained Heat','Dusky with enlarged sides','Tense or Inflated Left Middle'],
+['Liver Attacking Lungs','Stress-linked sudden dyspnea; dry cough; wheeze; panic; chest tightness; sighing','Underlying Liver Qi stagnation tongue; no unique tongue specified','Liver stagnation at Left Middle + Qi deficiency at Right Distal'],
+['Liver Blood Stagnation','Fixed stabbing pain; dark clots; painful periods; infertility; abdominal masses','Purple edges','Choppy Left Middle'],
+['Liver Heat and Fire','Rage; loud voice; bursting headache; sudden tinnitus; thirst; bitter taste; dry stool','Red body with redder sides; yellow dry coat','Tense/Inflated + Pounding; Full-Overflowing; Rapid'],
+['Liver and Gallbladder Damp-Heat','Jaundice; nausea; hypochondriac pain; scanty dark urine; genital discharge or swelling','Red body with sticky yellow coat','Slippery + Pounding in Liver/Gallbladder positions'],
+['Stagnation of Cold in the Liver Channel','Contracting genital/lower abdominal pain relieved by warmth; vertex headache; clear vomiting','Pale and wet with white coat','Deep; Wiry; Slow'],
+['Liver Qi and Yang Deficiency','Able to contemplate but not execute; poor containment; lassitude; fatigue improves with rest','Pale sides','Feeble; Absent; or Empty Left Middle'],
+['Liver Blood Deficiency','Postural dizziness; poor night vision; numbness; cramps; scanty pale menses; dry hair','Pale or peach sides; thin and dry','Thin or Yielding Partially Hollow Left Middle'],
+['Liver Yin Deficiency','Blood deficiency + dry eyes; evening heat; five-palm heat; night sweats; small-sip thirst','Dry; peeled; contracted sides','Tight-to-Wiry Left Middle'],
+['Liver Yang Rising','Throbbing temporal headache; boat-rocking dizziness; gradual tinnitus better with pressure','Thin and scarlet; peeled and indented sides','Tight-Wiry Left Middle; possible Full-Overflowing wave'],
+['Extreme Heat Generating Wind','High fever; convulsions; neck rigidity; opisthotonos; possible coma','Stiff and deep red with thick dry yellow coat','Tense-Hollow Full-Overflowing + Rapid'],
+['Liver Fire Generating Wind','Tremor + rage; bursting headache; sudden tinnitus; bitter taste; constipation','Dark red with redder sides; thick rough dry yellow coat','Tense-Hollow Full-Overflowing + Rapid'],
+['Liver Yang Rising Generating Wind','Tremor or tic + severe dizziness; gradual tinnitus; dryness; stroke-like signs','Thin red/magenta; peeled shrunken sides; tremor or deviation','Floating-Tight; Tight-Wiry Left Middle; slightly Rapid'],
+['Liver Blood Deficiency Generating Wind','Fine tremor; tic; spasms; postural dizziness; pallor; scanty menses','Pale; thin; dry; peach-colored sides','Thin + Floating-Tight']
+);
+sourceAtlas.find(pattern=>pattern.name==='Liver Blood Deficiency Generating Wind').acupuncture+=' Source check: the handout says LIV-18, but the Liver channel ends at LIV-14; verify the intended point with your instructor.';
+sourceAtlas.forEach(pattern=>{
+  const shared={deck:pattern.deck,w:'This is the source-handout profile for '+pattern.name+'.',d:'Identify the pattern from mechanism, tongue, pulse, and discriminating symptoms before choosing treatment.',t:'Do not transfer a point or formula from a look-alike pattern.',m:'Diagnosis opens the gate; signs confirm it; treatment completes the path.'};
+  cards.push({...shared,q:'What tongue and pulse findings confirm '+pattern.name+'?',a:'Tongue: '+pattern.tongue+'; Pulse: '+pattern.pulse,c:'Match both tongue + pulse to the named pattern.'});
+  cards.push({...shared,q:'What etiologies are associated with '+pattern.name+'?',a:pattern.etiology,c:'Etiology should explain the mechanism, not replace the diagnosis.'});
+  cards.push({...shared,q:'Which acupuncture treatments are listed for '+pattern.name+'?',a:pattern.acupuncture,c:'Recall the core Liver strategy + the points that target the manifestation.'});
+  cards.push({...shared,q:'Which formulas and major herbs are listed for '+pattern.name+'?',a:'Formulas: '+pattern.formulas+'; Major herbs: '+pattern.herbs,c:'Connect the prescription to the exact pattern mechanism.'});
+});
+const formulaQuizPool=sourceAtlas.filter(pattern=>!pattern.formulas.startsWith('No specific')&&!pattern.formulas.startsWith('No single'));
+formulaQuizPool.forEach((pattern,index)=>{
+  const distractors=formulaQuizPool.filter(other=>other.name!==pattern.name).slice(index%Math.max(1,formulaQuizPool.length-3)).concat(formulaQuizPool).filter((other,position,array)=>other.name!==pattern.name&&array.findIndex(item=>item.name===other.name)===position).slice(0,3).map(other=>other.formulas);
+  const answerIndex=index%4;
+  const options=[...distractors];options.splice(answerIndex,0,pattern.formulas);
+  quizzes.push({deck:pattern.deck,q:'Which formula set matches '+pattern.name+'?',opts:options,ans:answerIndex,exp:pattern.name+' is treated in the handout with '+pattern.formulas});
+});
+const deckMap={'Core Patterns':'deck1','Deficiency & Rising':'deck2','Liver Attacking':'deck3','Liver Wind':'deck3'};
+const deckLabel={deck1:'Core Patterns',deck2:'Deficiency & Rising',deck3:'Liver Attacking & Wind'};
+const flashcards=cards.map(x=>({deck:deckMap[x.deck]||'deck1',tag:x.deck,front:x.q,answer:x.a,why:x.w,golden:x.c,differential:x.d,trap:x.t,lantern:x.m,board:'Defend this diagnosis against its closest rival using the strongest tongue, pulse, timing, or mechanism clue.'}));
+const quizBank=quizzes.map(x=>({deck:deckMap[x.deck]||'deck1',q:x.q,options:x.opts,answer:x.ans,exp:x.exp,golden:'Golden Clue: '+(x.golden||x.exp.split('.')[0])}));
+const rapidDeckMap={'Core Patterns':'core','Deficiency & Rising':'deficiency','Liver Attacking':'attacking','Liver Wind':'wind'};
+const rapidFireBank=cards.filter(x=>rapidDeckMap[x.deck]).map(x=>({deck:rapidDeckMap[x.deck],tag:x.deck,prompt:x.c,answer:x.a,why:x.w}));
+const sortItems=[
+['Variable distension, sighing, and PMS improved by exercise','Liver Qi Stagnation'],
+['Stress-linked reflux, belching, nausea, and poor appetite','Liver Attacking Spleen/Stomach'],
+['Stress-linked alternating constipation and diarrhea','Liver Attacking Intestines'],
+['Stress-linked urinary urgency/frequency with dusky enlarged sides','Liver Attacking Bladder'],
+['Stress-triggered dyspnea, dry cough, panic, and weak Right Distal','Liver Attacking Lungs'],
+['Fixed stabbing pain, dark clots, purple edges, and Choppy pulse','Liver Blood Stagnation'],
+['Sudden loud tinnitus worse with pressure, rage, and dry yellow coat','Liver Heat/Fire'],
+['Jaundice or genital discharge with sticky yellow coat and Slippery pulse','Liver/GB Damp-Heat'],
+['Contracting genital pain relieved by warmth with Deep Wiry Slow pulse','Cold in Liver Channel'],
+['Able to contemplate but not execute; pale sides and Empty Left Middle','Liver Qi/Yang Deficiency'],
+['Postural dizziness, poor night vision, cramps, and scanty pale menses','Liver Blood Deficiency'],
+['Blood deficiency signs + night sweats, five-palm heat, and peeled sides','Liver Yin Deficiency'],
+['Throbbing headache, boat-rocking dizziness, and gradual tinnitus better with pressure','Liver Yang Rising'],
+['High fever, convulsions, rigidity, and deep-red stiff tongue','Extreme Heat Generating Wind'],
+['Tremor + rage, bursting headache, sudden tinnitus, and rough yellow coat','Liver Fire Generating Wind'],
+['Tremor/tic + severe dizziness, gradual tinnitus, and peeled shrunken sides','Liver Yang Rising Generating Wind'],
+['Fine tremor/tic with pallor, numbness, and scanty menses','Liver Blood Deficiency Generating Wind']
+];
+const sortLabels=[...new Set(sortItems.map(x=>x[1]))];
+const key=n=>STUDY_TEMPLE_ID+'_'+n;let mastered=new Set(JSON.parse(localStorage.getItem(key('mastered'))||'[]'));let missed=JSON.parse(localStorage.getItem(key('missed'))||'[]');let quizStats=JSON.parse(localStorage.getItem(key('quizStats'))||'{"right":0,"total":0}');
+function normalizeVisibleSeparators(value){
+  if(typeof value==='string')return value.replace(/\s*\/\s*/g,' | ').replace(/\bplus\b/gi,'+');
+  if(Array.isArray(value)){value.forEach((item,index)=>value[index]=normalizeVisibleSeparators(item));return value}
+  if(value&&typeof value==='object'){Object.keys(value).forEach(key=>value[key]=normalizeVisibleSeparators(value[key]));return value}
+  return value;
+}
+[PATTERN_SYSTEMS,patterns,cards,quizzes,pearlData,lanternData,flashcards,quizBank,rapidFireBank,sortItems,sortLabels,missed].forEach(normalizeVisibleSeparators);
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function selectMode(id){document.querySelectorAll('.tab').forEach(x=>x.classList.add('hidden'));document.getElementById(id)?.classList.remove('hidden');document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'})}
+window.selectMode=selectMode;
+function save(){localStorage.setItem(key('mastered'),JSON.stringify([...mastered]));localStorage.setItem(key('missed'),JSON.stringify(missed));localStorage.setItem(key('quizStats'),JSON.stringify(quizStats));updateStats();renderMissed()}
+function updateStats(){document.getElementById('cardsSeen').textContent=mastered.size+' | '+flashcards.length;document.getElementById('quizAccuracy').textContent=quizStats.total?Math.round(quizStats.right/quizStats.total*100)+'%':'0%';document.getElementById('rehabScore').textContent=missed.length?'In progress':'Clear'}
+const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function splitSymptomItems(text){
+  const items=[];let current='';let inQuote=false;
+  for(const character of String(text||'')){
+    if(character==='“'||character==='"')inQuote=!inQuote;
+    if(!inQuote&&(character===','||character===';')){
+      if(current.trim())items.push(current.trim());
+      current='';
+    }else current+=character;
+    if(character==='”')inQuote=false;
+  }
+  if(current.trim())items.push(current.trim());
+  return items;
+}
+function symptomList(text){
+  const items=splitSymptomItems(text);
+  if(items.length<2)return esc(text);
+  items.forEach((item,index)=>{
+    items[index]=item.replace(/^(?:and|or)\s+/i,'').replace(/[a-z]/i,letter=>letter.toUpperCase());
+  });
+  return '<ul class="symptom-list">'+items.map(item=>'<li>'+esc(item)+'</li>').join('')+'</ul>';
+}
+function normalizeFlashSymptomText(text){
+  return String(text||'')
+    .replace(/jaundice or genital discharge with Liver heat signs/gi,'Jaundice, genital discharge, Liver heat signs')
+    .replace(/with a dusky enlarged-sided tongue and Tense Left Middle/gi,'Dusky enlarged-sided tongue, Tense Left Middle');
+}
+function formatFlashFront(text){
+  const original=String(text||'');
+  const definedPrefix='Which pattern is defined by ';
+  if(original.startsWith(definedPrefix)){
+    const symptoms=normalizeFlashSymptomText(original.slice(definedPrefix.length).replace(/\?$/,''));
+    return '<span class="flash-front-question">Which pattern is defined by the following signs?</span>'+symptomList(symptoms);
+  }
+  if(/[;,]/.test(original)&&/indicates? what(?: pattern)?\?$/i.test(original)){
+    const symptoms=normalizeFlashSymptomText(original.replace(/\s*indicates? what(?: pattern)?\?$/i,''));
+    return '<span class="flash-front-question">Which pattern do the following signs indicate?</span>'+symptomList(symptoms);
+  }
+  return esc(original);
+}
+document.getElementById('overviewCompass').innerHTML=patterns.map(p=>'<div class="overview-card"><h3>'+esc(p[0])+'</h3>'+symptomList(p[1])+'<p><strong>Tongue: </strong>'+esc(String(p[2]).replace(/\s*[,/]\s*/g,' | '))+'<br><strong>Pulse: </strong>'+esc(String(p[3]).replace(/\s*[,/]\s*/g,' | '))+'</p></div>').join('');
+document.getElementById('sourceAtlas').innerHTML=sourceAtlas.map(pattern=>'<details class="atlas-entry"><summary>'+esc(pattern.name)+'</summary><div class="atlas-body"><p><strong>Symptoms</strong></p>'+symptomList(pattern.symptoms)+'<p><strong>Tongue: </strong>'+esc(pattern.tongue)+'</p><p><strong>Pulse: </strong>'+esc(pattern.pulse)+'</p><p><strong>Etiology: </strong>'+esc(pattern.etiology)+'</p><p><strong>Acupuncture: </strong>'+esc(pattern.acupuncture)+'</p><p><strong>Formulas: </strong>'+esc(pattern.formulas)+'</p><p><strong>Major herbs: </strong>'+esc(pattern.herbs)+'</p></div></details>').join('');
+function formatFlashAnswer(text){const parts=String(text||'').split(';').map(item=>item.trim()).filter(Boolean);return parts.length>1?'<ul class="symptom-list">'+parts.map(item=>'<li>'+esc(item.replace(/^(?:and|or)\s+/i,'').replace(/[a-z]/i,letter=>letter.toUpperCase()))+'</li>').join('')+'</ul>':esc(text)}
+let flashDeck=[],fi=0;function getFlashPool(){const d=flashDeckEl.value;return d==='all'?flashcards:flashcards.filter(x=>x.deck===d)}function shuffleCurrentFlashDeck(){flashDeck=shuffle(getFlashPool());fi=0;renderFlash()}function renderFlash(){if(!flashDeck.length)flashDeck=getFlashPool();const x=flashDeck[fi];flashcard.classList.remove('flipped');flashcard.classList.toggle('foggy-marker',false);flashTag.textContent=x.tag;flashFront.innerHTML=formatFlashFront(x.front);flashBack.innerHTML='<div class="flash-reveal compact-reveal"><div class="flash-answer-panel">'+formatFlashAnswer(x.answer)+'</div><div class="flash-why-panel"><strong>Why: </strong>'+esc(x.why)+'</div></div>';flashHook.innerHTML='<div class="flash-golden-panel"><strong>Golden Clue: </strong>'+esc(x.golden)+'</div><div class="flash-memory-grid"><div class="flash-memory-cell"><strong>Differential Trigger: </strong>'+esc(x.differential)+'</div><div class="flash-memory-cell"><strong>Trap Warning: </strong>'+esc(x.trap)+'</div><div class="flash-memory-cell"><strong>Memory Lantern: </strong>'+esc(x.lantern)+'</div><div class="flash-memory-cell"><strong>Board Move: </strong>'+esc(x.board)+'</div></div>'}function flipCard(){flashcard.classList.toggle('flipped')}function nextFlashcard(){fi=(fi+1)%flashDeck.length;renderFlash()}function prevFlashcard(){fi=(fi-1+flashDeck.length)%flashDeck.length;renderFlash()}function markFlashSealed(){mastered.add(flashDeck[fi].front);save();nextFlashcard()}function markFlashFoggy(){flashcard.classList.add('foggy-marker');nextFlashcard()}
+const flashDeckEl=document.getElementById('flashDeck');window.shuffleCurrentFlashDeck=shuffleCurrentFlashDeck;window.flipCard=flipCard;window.nextFlashcard=nextFlashcard;window.prevFlashcard=prevFlashcard;window.markFlashSealed=markFlashSealed;window.markFlashFoggy=markFlashFoggy;flashcard.onclick=flipCard;shuffleCurrentFlashDeck();
+let qdeck=[],qi=0,qright=0,qanswered=false;function startQuiz(){const d=quizDeck.value;qdeck=shuffle(d==='mixed'?quizBank:d==='missedOnly'?missed:quizBank.filter(x=>x.deck===d));qi=0;qright=0;quizBox.classList.remove('hidden');renderQuiz();selectMode('quiz')}function renderQuiz(){if(!qdeck.length){quizQuestion.textContent='No questions are waiting in this deck.';quizAnswers.innerHTML='';return}const x=qdeck[qi];qanswered=false;quizNum.textContent=(qi+1)+' | '+qdeck.length;quizScoreText.textContent=qright+' correct';quizMeter.style.width=(qi/qdeck.length*100)+'%';quizQuestion.textContent=x.q;quizExplain.classList.add('hidden');quizAnswers.innerHTML=x.options.map((o,i)=>'<button class="answer" data-i="'+i+'">'+o+'</button>').join('');quizAnswers.querySelectorAll('button').forEach(b=>b.onclick=()=>answerQuiz(+b.dataset.i,b))}function answerQuiz(i,b){if(qanswered)return;qanswered=true;const x=qdeck[qi],ok=i===x.answer;quizStats.total++;if(ok){qright++;quizStats.right++;mastered.add(x.q)}else if(!missed.some(m=>m.q===x.q))missed.push(x);quizAnswers.children[x.answer]?.classList.add('correct');if(!ok)b.classList.add('incorrect');quizExplain.classList.remove('hidden');quizExplain.innerHTML='<strong>'+(ok?'Pattern recognized. Here’s why: ':'Not quite. Here’s why: ')+'</strong>'+x.exp+'<br><br><em>'+x.golden+'</em>';save()}function nextQuizQuestion(){if(qi<qdeck.length-1){qi++;renderQuiz()}else{quizMeter.style.width='100%';quizQuestion.textContent='Sacred cycle complete — '+qright+' | '+qdeck.length+' correct.';quizAnswers.innerHTML=''}}window.startQuiz=startQuiz;window.nextQuizQuestion=nextQuizQuestion;
+let rapid=[],ri=0;function startRapidFire(){const d=rapidDeck.value;rapid=shuffle(d==='all'?rapidFireBank:rapidFireBank.filter(x=>x.deck===d));ri=0;renderRapid()}function renderRapid(){const x=rapid[ri]||rapidFireBank[0];rapidCard.classList.remove('flipped');rapidTag.textContent=x.tag;rapidPrompt.textContent=x.prompt;rapidAnswerText.textContent=x.answer;rapidAnswer.innerHTML='<strong>Why: </strong>'+x.why;rapidCount.textContent=(ri+1)+' | '+rapid.length}function flipRapidCard(){rapidCard.classList.toggle('flipped')}function nextRapidFire(){ri=(ri+1)%rapid.length;renderRapid()}function prevRapidFire(){ri=(ri-1+rapid.length)%rapid.length;renderRapid()}function markRapidKnown(){mastered.add('rapid:'+rapid[ri].prompt);save();nextRapidFire()}function markRapidFoggy(){nextRapidFire()}Object.assign(window,{startRapidFire,flipRapidCard,nextRapidFire,prevRapidFire,markRapidKnown,markRapidFoggy});rapidCard.onclick=flipRapidCard;startRapidFire();
+let archive=[],ai=0,aright=0,aanswered=false;function startSacredArchives(){archive=shuffle(quizBank);ai=0;aright=0;archiveQuizBox.classList.remove('hidden');renderArchive();selectMode('archives')}function renderArchive(){const x=archive[ai];aanswered=false;archiveNum.textContent=(ai+1)+' | '+archive.length;archiveScoreText.textContent=aright+' correct';archiveMeter.style.width=(ai/archive.length*100)+'%';archiveQuestion.textContent=x.q;archiveAnswers.innerHTML=x.options.map((o,i)=>'<button class="answer" data-i="'+i+'">'+o+'</button>').join('');archiveExplain.classList.add('hidden');archiveAnswers.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(aanswered)return;aanswered=true;const ok=+b.dataset.i===x.answer;if(ok)aright++;archiveAnswers.children[x.answer].classList.add('correct');if(!ok)b.classList.add('incorrect');archiveExplain.classList.remove('hidden');archiveExplain.innerHTML='<strong>'+(ok?'Wisdom Retained. Here’s why: ':'Pathway Unclear. Here’s why: ')+'</strong>'+x.exp+'<br><br><em>'+x.golden+'</em>'})}function nextArchiveQuestion(){if(ai<archive.length-1){ai++;renderArchive()}else{archiveMeter.style.width='100%';archiveQuestion.textContent='Archive complete — '+aright+' | '+archive.length+' correct.';archiveAnswers.innerHTML=''}}function resetArchiveQuizView(){archiveQuizBox.classList.add('hidden')}Object.assign(window,{startSacredArchives,nextArchiveQuestion,resetArchiveQuizView});
+function renderMissed(){missedList.innerHTML=missed.length?missed.map((x,i)=>'<div class="memory-box"><div class="question">'+x.q+'</div><button onclick="revealMissed('+i+')">Reveal correction</button><button onclick="clearMissed('+i+')">Rehabilitated</button><div id="missedReveal'+i+'" class="memory-box hidden"><strong>Answer: </strong>'+x.options[x.answer]+'<br><br>'+x.exp+'</div></div>').join(''):'<div class="memory-box">The chamber is clear. Miss a quiz question and it will appear here.</div>'}function revealMissed(i){document.getElementById('missedReveal'+i).classList.remove('hidden')}function clearMissed(i){missed.splice(i,1);save()}Object.assign(window,{revealMissed,clearMissed});
+function resetDragSort(){sortBank.innerHTML='';sortZones.innerHTML=sortLabels.map(z=>'<div class="drop-zone" data-zone="'+z+'"><h3>'+z+'</h3></div>').join('');shuffle(sortItems).forEach((x,i)=>{const e=document.createElement('div');e.className='drag-chip';e.draggable=true;e.id='drag'+i;e.dataset.answer=x[1];e.textContent=x[0];sortBank.appendChild(e)});document.querySelectorAll('.drag-chip').forEach(e=>e.ondragstart=ev=>ev.dataTransfer.setData('text',e.id));document.querySelectorAll('.drop-zone,.drag-bank').forEach(z=>{z.ondragover=e=>e.preventDefault();z.ondrop=e=>{e.preventDefault();z.appendChild(document.getElementById(e.dataTransfer.getData('text')))}});sortScore.textContent=''}function checkDragSort(){let n=0;document.querySelectorAll('.drop-zone').forEach(z=>z.querySelectorAll('.drag-chip').forEach(c=>{const ok=c.dataset.answer===z.dataset.zone;c.classList.toggle('sort-correct',ok);c.classList.toggle('sort-wrong',!ok);if(ok)n++}));sortScore.textContent=n+' | '+sortItems.length+' correct';if(n===sortItems.length){mastered.add('sorting');save()}}Object.assign(window,{resetDragSort,checkDragSort});resetDragSort();
+function infoSelection(data,sel){const keys=Object.keys(data);if(sel==='deck3')return{title:'Liver Attacking & Wind',rows:[...(data['Liver Attacking']||[]),...(data['Liver Wind']||[])]};const title=sel==='most_important'?keys[0]:sel==='deck1'?'Core Patterns':sel==='deck2'?'Deficiency & Rising':keys[0];return{title,rows:data[title]||data[keys[0]]}}function renderPearls(){const pack=infoSelection(pearlData,teacherLogicSelect.value);teacherLogicContent.innerHTML='<h3>'+pack.title+'</h3><table class="table"><tr><th>Seeing this...</th><th>Think this...</th></tr>'+pack.rows.map(x=>'<tr><td>'+x[0]+'</td><td>'+x[1]+'</td></tr>').join('')+'</table>'}function renderLanterns(){const pack=infoSelection(lanternData,memoryLanternSelect.value);memoryLanternContent.innerHTML='<h3>'+pack.title+'</h3><div class="memory-lantern-grid">'+pack.rows.map(x=>'<article class="memory-lantern-card"><h3>'+x[0]+'</h3><p>'+x[1]+'</p></article>').join('')+'</div>'}function renderTeacherLogic(){renderPearls()}function renderMemoryLanterns(){renderLanterns()}Object.assign(window,{renderTeacherLogic,renderMemoryLanterns});renderPearls();renderLanterns();
+function normalizeStaticVisibleText(){
+  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+  const nodes=[];let node;
+  while(node=walker.nextNode())if(!['SCRIPT','STYLE'].includes(node.parentElement?.tagName))nodes.push(node);
+  nodes.forEach(textNode=>textNode.nodeValue=textNode.nodeValue.replace(/\s*\/\s*/g,' | '));
+}
+function resetFlashProgress(){mastered.clear();save()}window.resetFlashProgress=resetFlashProgress;updateStats();renderMissed();selectPatternSystem(localStorage.getItem(STUDY_TEMPLE_ID+'_activePatternSystem')||'liver');normalizeStaticVisibleText();
+</script></body></html>
